@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Depends, HTTPException, Query
+import os
+from fastapi import FastAPI, Depends, HTTPException, Query, Header
 from sqlalchemy.orm import Session
 from typing import Dict, Any
 
@@ -9,17 +10,42 @@ from app.graph_engine import generate_codebase_graph
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="CodeCompass API", version="1.0.0", description="API for CodeCompass, a code auditing tool.")
+app = FastAPI(
+    title="CodeCompass API",
+    version="1.0.0",
+    description="API for CodeCompass, a code auditing tool."
+)
+
+# Fix 1: Static API key read from environment variable at startup.
+# If the variable is not set, the guard is permissive (local dev mode).
+# To activate enforcement: set CODECOMPASS_API_KEY in your shell or run_demo.bat
+# before starting Uvicorn.  The frontend reads the same value from secrets.toml.
+_API_KEY = os.getenv("CODECOMPASS_API_KEY", "")
+
+
+def verify_api_key(x_api_key: str = Header("", alias="X-API-Key")):
+    """
+    FastAPI dependency — enforces the static API key boundary.
+    Raises HTTP 401 if the server key is configured and the header does not match.
+    When CODECOMPASS_API_KEY is not set (empty), all requests are allowed through
+    so the app works out-of-the-box without extra configuration.
+    """
+    if _API_KEY and x_api_key != _API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid or missing X-API-Key header.")
+
 
 @app.get("/")
 def read_root():
+    """Health check — intentionally public so the frontend status pill works."""
     return {"message": "CodeCompass Engine is online"}
+
 
 @app.post("/api/audit")
 def run_audit(
-    project_name: str = Query(..., description = "Name of the project" ),
-    directory_path: str = Query(..., description = "Path to the codebase directory"),
-    db: Session = Depends(get_db)
+    project_name: str = Query(..., description="Name of the project"),
+    directory_path: str = Query(..., description="Path to the codebase directory"),
+    db: Session = Depends(get_db),
+    _: None = Depends(verify_api_key)          # Fix 1: API key guard
 ) -> Dict[str, Any]:
 
     # 1. Run AST Static Auditor
@@ -39,7 +65,7 @@ def run_audit(
     # 3. Save Detected Issues to DB
     for issue in audit_results["issues"]:
         db_issue = AuditIssue(
-            project_id=new_project.id, # Uses parent ID generated above
+            project_id=new_project.id,
             rule_name=issue["rule_name"],
             severity=issue["severity"],
             file_path=issue["file_path"],
@@ -47,7 +73,7 @@ def run_audit(
             viva_tip=issue["viva_tip"]
         )
         db.add(db_issue)
-    
+
     db.commit()
 
     return {
@@ -61,26 +87,31 @@ def run_audit(
         "issues": audit_results["issues"]
     }
 
+
 @app.get("/api/projects/{project_id}")
-def get_project_report(project_id: int, db: Session = Depends(get_db)):
+def get_project_report(
+    project_id: int,
+    db: Session = Depends(get_db),
+    _: None = Depends(verify_api_key)          # Fix 1: API key guard
+):
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
-    
+
     issues = db.query(AuditIssue).filter(AuditIssue.project_id == project_id).all()
-    
+
     return {
         "project": project,
         "issues": issues
     }
 
+
 @app.get("/api/graph")
 def get_codebase_graph(
-    directory_path: str = Query(..., description="Path to project code directory")
+    directory_path: str = Query(..., description="Path to project code directory"),
+    _: None = Depends(verify_api_key)          # Fix 1: API key guard
 ):
-    """
-    Generates nodes and edges for call-graph visualization.
-    """
+    """Generates nodes and edges for call-graph visualisation."""
     graph_data = generate_codebase_graph(directory_path)
     return {
         "status": "success",

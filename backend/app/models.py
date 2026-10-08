@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from app.database import Base
 
 class Project(Base):
@@ -12,7 +12,7 @@ class Project(Base):
     total_files = Column(Integer, default=0)
     total_lines = Column(Integer, default=0)
     total_functions = Column(Integer, default=0)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     #Relationships
     issues = relationship("AuditIssue", back_populates = "project")

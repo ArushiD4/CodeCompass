@@ -365,3 +365,79 @@ def test_global_navbar_navigation():
     _no_exception(at, "after Overview click")
     assert _ss(at, "_page") == "landing"
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# T14: Directory input pre-fill behavior (blank on load/sample, manual persists)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def test_audit_input_prefill_behavior():
+    """Directory inputs must be blank on first load and after sample audit,
+
+    pre-filling only when the user has executed a real manual audit.
+    """
+    sample_dir = os.path.abspath(FRONTEND_DIR)
+
+    # 1. Fresh dashboard load: directory input must be blank
+    at1 = AppTest.from_file(APP_PATH, default_timeout=30)
+    at1.session_state["_page"] = "dashboard"
+    at1.session_state["authenticated"] = True
+    at1.session_state["offline_mode"] = True
+    at1.run()
+    _no_exception(at1, "fresh dashboard load")
+    dir_inputs = [ti for ti in at1.text_input if ti.label == "Local directory path"]
+    assert dir_inputs, "Local directory path text input not found"
+    assert dir_inputs[0].value == "", f"Expected blank directory input on first load, got {dir_inputs[0].value!r}"
+
+    # 2. After sample audit (last_audit_path is sample_dir): both inputs must remain blank
+    at2 = AppTest.from_file(APP_PATH, default_timeout=30)
+    at2.session_state["_page"] = "dashboard"
+    at2.session_state["authenticated"] = True
+    at2.session_state["offline_mode"] = True
+    at2.session_state["last_audit_data"] = {
+        "project_id": 99,
+        "project_name": "Demo — Sample Snippet",
+        "crs_score": 85,
+        "total_files": 1,
+        "issues_found": 0,
+        "total_functions": 1,
+        "issues": [],
+    }
+    at2.session_state["last_audit_path"] = sample_dir
+    at2.run()
+    _no_exception(at2, "after sample audit load")
+    audit_inputs = [ti for ti in at2.text_input if ti.label == "Local directory path"]
+    assert audit_inputs and audit_inputs[0].value == "", (
+        f"Expected blank audit path after sample audit, got {audit_inputs[0].value!r}"
+    )
+    graph_inputs = [ti for ti in at2.text_input if ti.label == "Source directory path"]
+    assert graph_inputs and graph_inputs[0].value == "", (
+        f"Expected blank graph path after sample audit, got {graph_inputs[0].value!r}"
+    )
+
+    # 3. After real manual audit: inputs must pre-fill with the manual audit path
+    manual_path = r"C:\path\to\my_project"
+    at3 = AppTest.from_file(APP_PATH, default_timeout=30)
+    at3.session_state["_page"] = "dashboard"
+    at3.session_state["authenticated"] = True
+    at3.session_state["offline_mode"] = True
+    at3.session_state["last_audit_data"] = {
+        "project_id": 100,
+        "project_name": "Manual Scan",
+        "crs_score": 90,
+        "total_files": 3,
+        "issues_found": 1,
+        "total_functions": 5,
+        "issues": [],
+    }
+    at3.session_state["last_audit_path"] = manual_path
+    at3.run()
+    _no_exception(at3, "after manual audit load")
+    audit_inputs_manual = [ti for ti in at3.text_input if ti.label == "Local directory path"]
+    assert audit_inputs_manual and audit_inputs_manual[0].value == manual_path, (
+        f"Expected {manual_path!r}, got {audit_inputs_manual[0].value!r}"
+    )
+    graph_inputs_manual = [ti for ti in at3.text_input if ti.label == "Source directory path"]
+    assert graph_inputs_manual and graph_inputs_manual[0].value == manual_path, (
+        f"Expected {manual_path!r}, got {graph_inputs_manual[0].value!r}"
+    )
+

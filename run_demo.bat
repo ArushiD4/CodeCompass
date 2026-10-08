@@ -37,8 +37,11 @@ if exist "%VENV_PYTHON%" (
 )
 
 REM ── 2. Start the FastAPI backend in a new window ──────────────────────────
+REM Fix 1: Export the API key so the FastAPI verify_api_key dependency can read it.
+REM        The same value lives in frontend/.streamlit/secrets.toml for the Streamlit side.
+set CODECOMPASS_API_KEY=cc-local-dev-2024
 echo  [1/3] Starting FastAPI backend on http://localhost:8000 ...
-start "CodeCompass Backend" cmd /k "cd /d %SCRIPT_DIR%backend && %RUN_UVICORN% app.main:app --reload --host 127.0.0.1 --port 8000"
+start "CodeCompass Backend" cmd /k "set CODECOMPASS_API_KEY=cc-local-dev-2024 && cd /d %SCRIPT_DIR%backend && %RUN_UVICORN% app.main:app --reload --host 127.0.0.1 --port 8000"
 
 REM ── 3. Wait for the backend health check to pass (max 30 s) ──────────────
 echo  [2/3] Waiting for backend to be ready ...
@@ -74,7 +77,7 @@ echo  ========================================
 echo    Opening http://localhost:8501 ...
 echo  ========================================
 echo.
-start "" "http://localhost:8501"
+REM start "" "http://localhost:8501"
 
 echo  Both services are running.
 echo  Close the two terminal windows to stop them.

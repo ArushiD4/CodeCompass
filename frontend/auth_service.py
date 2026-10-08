@@ -4,14 +4,17 @@ import streamlit as st
 # Fetch the API key from secrets.toml if present; fall back to empty string
 # so the module can be imported safely in environments without a secrets file
 # (e.g. pytest / AppTest). The bypass logic below already handles empty keys.
-FIREBASE_API_KEY = st.secrets.get("FIREBASE_API_KEY", "")
+try:
+    FIREBASE_API_KEY = st.secrets.get("FIREBASE_API_KEY", "")
+except FileNotFoundError:
+    FIREBASE_API_KEY = ""
 
 def login_with_third_party(email: str, password: str) -> dict:
     """
     Current: Hits Firebase REST API.
     Future: Change URL to 'http://localhost:8000/api/login'
     """
-    if FIREBASE_API_KEY.startswith("AIzaSyYourFirebaseApiKeyHere") or not FIREBASE_API_KEY:
+    if FIREBASE_API_KEY.startswith("AIzaSyB0DPf0g1uVRSqP9gJrg5G7yN-NF90suMs") or not FIREBASE_API_KEY:
         # Temporary bypass for local testing: allow login if email and password are provided
         if email and password:
             return {"success": True, "token": "dummy-token-12345", "user_id": "dummy-user-id"}
@@ -36,7 +39,7 @@ def login_with_third_party(email: str, password: str) -> dict:
         return {"success": False, "error": f"Connection error: {str(e)}"}
 
 def signup_with_third_party(email: str, password: str) -> dict:
-    if FIREBASE_API_KEY.startswith("AIzaSyYourFirebaseApiKeyHere") or not FIREBASE_API_KEY:
+    if FIREBASE_API_KEY.startswith("AIzaSyB0DPf0g1uVRSqP9gJrg5G7yN-NF90suMs") or not FIREBASE_API_KEY:
         # Temporary bypass for local testing: allow signup
         if email and password:
             return {"success": True}
@@ -63,7 +66,7 @@ def reset_password_with_third_party(email: str) -> dict:
     """    
     Sends a password reset email using Firebase REST API.
     """
-    if FIREBASE_API_KEY.startswith("AIzaSyYourFirebaseApiKeyHere") or not FIREBASE_API_KEY:
+    if FIREBASE_API_KEY.startswith("AIzaSyB0DPf0g1uVRSqP9gJrg5G7yN-NF90suMs") or not FIREBASE_API_KEY:
         # Temporary bypass for local testing: allow reset link send
         if email:
             return {"success": True}

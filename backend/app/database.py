@@ -1,15 +1,36 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, event
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./codecompass.db"
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    SQLALCHEMY_DATABASE_URL,
+    # check_same_thread=False: allow the same connection across threads (required for FastAPI).
+    # timeout=30: wait up to 30 s to acquire a write lock before raising OperationalError,
+    # absorbing burst-traffic lock contention that would otherwise produce HTTP 500 at 5 s.
+    connect_args={"check_same_thread": False, "timeout": 30}
 )
-SessionLocal = sessionmaker(autocommit = False, autoflush = False, bind = engine)
+
+
+@event.listens_for(engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    """
+    Fix 5: Enable Write-Ahead Logging on every new SQLite connection.
+    WAL allows concurrent readers while a writer holds the lock, eliminating
+    the 'database is locked' collision under parallel audit requests.
+    synchronous=NORMAL is the correct paired setting for WAL — safe and
+    substantially faster than the default FULL mode.
+    """
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.execute("PRAGMA synchronous=NORMAL")
+    cursor.close()
+
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+
 
 def get_db():
     db = SessionLocal()
