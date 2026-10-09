@@ -7,6 +7,7 @@ clean data payloads or user-friendly error strings.
 
 Contracts defined in ARCHITECTURE.md section 6.
 """
+import os
 import requests
 import streamlit as st
 
@@ -17,14 +18,24 @@ def _base():
     return st.session_state["backend_url"].rstrip("/")
 
 
-# Fix 1: Load the API key from Streamlit secrets (frontend/.streamlit/secrets.toml).
-# Falls back gracefully if the file is missing or the key is not set, which keeps
-# the app functional in environments where the backend key guard is not activated.
+# Fix 1: Load the API key from environment variable, Streamlit secrets, or fallback to dev default.
+# Ensures the app functions whether launched from the root directory, frontend directory, or shell.
 def _api_key() -> str:
+    # 1. Direct environment variable (takes precedence if exported in shell/bat)
+    env_key = os.getenv("CODECOMPASS_API_KEY", "")
+    if env_key:
+        return env_key
+
+    # 2. Streamlit secrets (.streamlit/secrets.toml)
     try:
-        return st.secrets.get("CODECOMPASS_API_KEY", "")
-    except FileNotFoundError:
-        return ""
+        secret_key = st.secrets.get("CODECOMPASS_API_KEY", "")
+        if secret_key:
+            return secret_key
+    except Exception:
+        pass
+
+    # 3. Default local development key fallback
+    return "pink-clounding"
 
 
 def _explain(resp):

@@ -24,7 +24,7 @@ app = FastAPI(
 # If the variable is not set, the guard is permissive (local dev mode).
 # To activate enforcement: set CODECOMPASS_API_KEY in your shell or run_demo.bat
 # before starting Uvicorn.  The frontend reads the same value from secrets.toml.
-_API_KEY = os.getenv("CODECOMPASS_API_KEY", "")
+_API_KEY = os.getenv("CODECOMPASS_API_KEY", "").strip()
 
 
 def verify_api_key(x_api_key: str = Header("", alias="X-API-Key")):
@@ -34,7 +34,7 @@ def verify_api_key(x_api_key: str = Header("", alias="X-API-Key")):
     When CODECOMPASS_API_KEY is not set (empty), all requests are allowed through
     so the app works out-of-the-box without extra configuration.
     """
-    if _API_KEY and x_api_key != _API_KEY:
+    if _API_KEY and x_api_key.strip() != _API_KEY:
         raise HTTPException(status_code=401, detail="Invalid or missing X-API-Key header.")
 
 

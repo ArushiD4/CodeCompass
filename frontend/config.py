@@ -52,3 +52,6 @@ RULES = (
 )
 PIPELINE = ("Directory path", "POST /api/audit", "AST rules", "CRS score",
             "SQLite report", "GET /api/graph")
+
+FIXTURE_BAD = r"C:\projects\codecompass\tests\fixtures\sample_bad"
+FIXTURE_CLEAN = r"C:\projects\codecompass\tests\fixtures\sample_clean"
