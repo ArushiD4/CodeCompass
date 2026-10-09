@@ -1,3 +1,9 @@
+"""
+database.py — SQLite engine configuration and session management.
+
+Configures the SQLAlchemy engine to connect to the local SQLite database,
+applying concurrent execution pragmas (WAL) to prevent lock contention.
+"""
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, declarative_base
 
@@ -33,6 +39,13 @@ Base = declarative_base()
 
 
 def get_db():
+    """
+    FastAPI dependency that provides an isolated SQLAlchemy session per request.
+    Ensures the connection is safely closed after the request completes.
+    
+    Yields:
+        Session: A bound SQLAlchemy session.
+    """
     db = SessionLocal()
     try:
         yield db

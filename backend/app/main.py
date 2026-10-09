@@ -13,7 +13,11 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="CodeCompass API",
     version="1.0.0",
-    description="API for CodeCompass, a code auditing tool."
+    description="""
+    Core API for CodeCompass, an AST-based static analysis and code auditing tool.
+    Provides endpoints for running codebase audits, retrieving historical project reports,
+    and generating call-graph visualisations.
+    """
 )
 
 # Fix 1: Static API key read from environment variable at startup.
@@ -36,7 +40,16 @@ def verify_api_key(x_api_key: str = Header("", alias="X-API-Key")):
 
 @app.get("/")
 def read_root():
-    """Health check — intentionally public so the frontend status pill works."""
+    """
+    Public health check endpoint.
+    
+    Returns a simple status message indicating that the backend is online.
+    This endpoint is intentionally unauthenticated to allow the frontend 
+    to verify connectivity and display a status indicator.
+    
+    Returns:
+        dict: A dictionary containing a status message.
+    """
     return {"message": "CodeCompass Engine is online"}
 
 
@@ -47,6 +60,23 @@ def run_audit(
     db: Session = Depends(get_db),
     _: None = Depends(verify_api_key)          # Fix 1: API key guard
 ) -> Dict[str, Any]:
+    """
+    Executes a static analysis audit on a specified codebase directory.
+    
+    This endpoint parses all Python files in the given directory using the AST engine,
+    calculates a Code Readiness Score (CRS), and identifies anti-patterns. The results 
+    are persisted to the SQLite database and returned to the client.
+    
+    Args:
+        project_name (str): The human-readable name of the project being audited.
+        directory_path (str): The absolute or relative file system path to the target directory.
+        db (Session): The SQLAlchemy database session dependency.
+        _ (None): The API key verification dependency.
+        
+    Returns:
+        Dict[str, Any]: A dictionary containing the audit status, project metrics, 
+                        CRS score, and a list of identified issues.
+    """
 
     # 1. Run AST Static Auditor
     audit_results = audit_codebase(directory_path)
@@ -94,6 +124,20 @@ def get_project_report(
     db: Session = Depends(get_db),
     _: None = Depends(verify_api_key)          # Fix 1: API key guard
 ):
+    """
+    Retrieves a historical project audit report by its unique ID.
+    
+    Args:
+        project_id (int): The primary key ID of the project in the database.
+        db (Session): The SQLAlchemy database session dependency.
+        _ (None): The API key verification dependency.
+        
+    Returns:
+        dict: A dictionary containing the `project` metadata and a list of associated `issues`.
+        
+    Raises:
+        HTTPException: If no project with the specified ID exists (HTTP 404).
+    """
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -111,7 +155,20 @@ def get_codebase_graph(
     directory_path: str = Query(..., description="Path to project code directory"),
     _: None = Depends(verify_api_key)          # Fix 1: API key guard
 ):
-    """Generates nodes and edges for call-graph visualisation."""
+    """
+    Generates a call-graph representation of the specified codebase.
+    
+    This endpoint parses the codebase to extract function definitions and invocations,
+    returning a structured list of nodes and edges suitable for graph visualisation.
+    
+    Args:
+        directory_path (str): The file system path to the target directory.
+        _ (None): The API key verification dependency.
+        
+    Returns:
+        dict: A dictionary containing the status and the generated graph data 
+              (nodes and edges).
+    """
     graph_data = generate_codebase_graph(directory_path)
     return {
         "status": "success",

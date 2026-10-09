@@ -1,4 +1,10 @@
-"""Login, sign-up, password reset and the Developer Offline Mode toggle."""
+"""
+auth.py — Authentication View.
+
+Renders the authentication interface, including tabbed panels for login, 
+sign-up, and password resets. Also hosts the Developer Offline Mode toggle 
+to allow network-isolated testing.
+"""
 import streamlit as st
 import auth_bridge
 from components import navbar
@@ -33,6 +39,13 @@ def _reset_form():
 
 
 def render():
+    """
+    Renders the complete authentication card interface.
+    
+    Manages the display of standard authentication tabs (Sign In, Sign Up, Reset),
+    binds them to the auth_bridge adapter, and conditionally renders the offline
+    mode bypass when activated.
+    """
     navbar.render("auth")
     with st.container(key="card_auth"):
         st.html('<p class="cc-h2" style="font-size:1.4rem">Welcome to CodeCompass</p>'

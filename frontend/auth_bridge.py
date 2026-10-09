@@ -1,8 +1,12 @@
-"""Adapter between the UI and your existing auth_service.py.
+"""
+auth_bridge.py — Authentication UI Adapter.
 
-No Firebase logic lives here. If your auth_service.py names its functions
-differently, edit FUNCTION_NAMES below. Nothing else needs to change.
-Expected return shape (ARCHITECTURE.md 5.2): {"success": bool, "token", "user_id", "error"}
+Provides a standardized interface between the Streamlit UI components and the 
+underlying authentication service (Firebase). Isolates the frontend views from 
+implementation-specific authentication logic and manages session state hydration 
+upon successful login.
+
+Expected return shape (ARCHITECTURE.md 5.2): {"success": bool, "token": str, "user_id": str, "error": str}
 """
 import streamlit as st
 from config import OFFLINE_EMAIL, OFFLINE_TOKEN
@@ -53,7 +57,12 @@ def _finish(result, email):
 
 
 def enter_offline():
-    """Developer Offline Mode: no network call at all (section 5.2)."""
+    """
+    Developer Offline Mode initializer (Architecture section 5.2).
+    
+    Bypasses external network calls entirely, hydrating the session state with
+    a mock developer identity and routing directly to the dashboard.
+    """
     st.session_state["offline_mode"] = True
     _start_session(OFFLINE_EMAIL, OFFLINE_TOKEN)
 

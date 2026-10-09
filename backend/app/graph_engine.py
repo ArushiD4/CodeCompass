@@ -7,6 +7,13 @@ MAX_FILE_BYTES = 512_000  # 500 KB
 
 
 class CallGraphVisitor(ast.NodeVisitor):
+    """
+    AST Visitor that maps function definitions and function calls.
+    
+    This visitor records defined functions as 'nodes' and function invocations as 'edges',
+    constructing a structured call graph of the parsed source file. It also resolves
+    decorators into synthetic edges to correctly link framework-driven code (like route handlers).
+    """
     def __init__(self, file_path: str):
         self.file_path = file_path
         self.current_function = None
@@ -16,13 +23,20 @@ class CallGraphVisitor(ast.NodeVisitor):
     # ------------------------------------------------------------------
     # Fix 4: helper — extract decorator names from a function definition
     # ------------------------------------------------------------------
-    def _decorator_names(self, node) -> List[str]:
+    def _decorator_names(self, node: ast.FunctionDef) -> List[str]:
         """
-        Return the flat name of every decorator attached to *node*.
-        Handles three forms:
-          @plain_name          → ast.Name        → plain_name
-          @obj.method          → ast.Attribute   → method
-          @obj.method(args)    → ast.Call        → method
+        Extracts and returns the flat names of every decorator attached to the given node.
+        
+        Handles three common decorator forms:
+          - @plain_name          -> ast.Name        -> 'plain_name'
+          - @obj.method          -> ast.Attribute   -> 'method'
+          - @obj.method(args)    -> ast.Call        -> 'method'
+          
+        Args:
+            node (ast.FunctionDef): The AST node representing the function definition.
+            
+        Returns:
+            List[str]: A list containing the string names of the decorators.
         """
         names = []
         for dec in node.decorator_list:
@@ -86,6 +100,23 @@ class CallGraphVisitor(ast.NodeVisitor):
 
 
 def generate_codebase_graph(directory_path: str) -> Dict[str, Any]:
+    """
+    Generates a complete call-graph for all Python files in the given directory.
+    
+    Recursively scans the directory, parses each valid Python file into an AST, 
+    and leverages the `CallGraphVisitor` to build a unified map of all internal
+    function definitions and invocations.
+    
+    Args:
+        directory_path (str): The absolute or relative path to the project directory.
+        
+    Returns:
+        Dict[str, Any]: A structured dictionary containing:
+            - 'nodes': List of defined functions.
+            - 'edges': List of caller-callee relationships.
+            - 'total_nodes': Count of nodes.
+            - 'total_edges': Count of edges.
+    """
     nodes = []
     edges = []
 

@@ -1,4 +1,10 @@
-"""Landing page: value proposition, two entry points, feature bento."""
+"""
+landing.py — Public Landing Page View.
+
+Renders the unauthenticated homepage containing the core value proposition,
+feature bento box layout, and entry points for both standard authentication
+and guest sample audits.
+"""
 import streamlit as st
 import state
 from components import navbar
@@ -29,6 +35,13 @@ def _features():
 
 
 def render():
+    """
+    Renders the complete landing page interface.
+    
+    Constructs the UI using the global navbar, main hero headline, 
+    interactive call-to-action buttons (Get Started, Sample Audit), 
+    and the feature highlights bento layout.
+    """
     navbar.render("landing")
     st.html(HEADLINE)
     with st.container(key="hero_cta"):

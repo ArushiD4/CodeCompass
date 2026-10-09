@@ -11,8 +11,18 @@ except FileNotFoundError:
 
 def login_with_third_party(email: str, password: str) -> dict:
     """
-    Current: Hits Firebase REST API.
-    Future: Change URL to 'http://localhost:8000/api/login'
+    Authenticates a user against the external identity provider (Firebase).
+    
+    Provides a fallback bypass for local development if the API key is absent 
+    or matches a known placeholder.
+    
+    Args:
+        email (str): The user's email address.
+        password (str): The user's plaintext password.
+        
+    Returns:
+        dict: A dictionary containing a boolean 'success' flag. On success, includes 
+              'token' and 'user_id'. On failure, includes an 'error' string.
     """
     if FIREBASE_API_KEY.startswith("AIzaSyB0DPf0g1uVRSqP9gJrg5G7yN-NF90suMs") or not FIREBASE_API_KEY:
         # Temporary bypass for local testing: allow login if email and password are provided
@@ -39,6 +49,20 @@ def login_with_third_party(email: str, password: str) -> dict:
         return {"success": False, "error": f"Connection error: {str(e)}"}
 
 def signup_with_third_party(email: str, password: str) -> dict:
+    """
+    Registers a new user account with the external identity provider (Firebase).
+    
+    Provides a fallback bypass for local development if the API key is absent 
+    or matches a known placeholder.
+    
+    Args:
+        email (str): The new user's email address.
+        password (str): The new user's plaintext password.
+        
+    Returns:
+        dict: A dictionary containing a boolean 'success' flag. On failure, includes 
+              an 'error' string.
+    """
     if FIREBASE_API_KEY.startswith("AIzaSyB0DPf0g1uVRSqP9gJrg5G7yN-NF90suMs") or not FIREBASE_API_KEY:
         # Temporary bypass for local testing: allow signup
         if email and password:
@@ -64,7 +88,16 @@ def signup_with_third_party(email: str, password: str) -> dict:
 
 def reset_password_with_third_party(email: str) -> dict:
     """    
-    Sends a password reset email using Firebase REST API.
+    Initiates a password reset flow via the external identity provider (Firebase).
+    
+    Sends an out-of-band (OOB) password reset link to the specified email address.
+    
+    Args:
+        email (str): The user's email address.
+        
+    Returns:
+        dict: A dictionary containing a boolean 'success' flag. On failure, includes 
+              an 'error' string.
     """
     if FIREBASE_API_KEY.startswith("AIzaSyB0DPf0g1uVRSqP9gJrg5G7yN-NF90suMs") or not FIREBASE_API_KEY:
         # Temporary bypass for local testing: allow reset link send

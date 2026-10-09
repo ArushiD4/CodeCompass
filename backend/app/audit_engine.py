@@ -11,7 +11,12 @@ MAX_FILE_BYTES = 512_000  # 500 KB
 class StaticAntiPatternAuditor(ast.NodeVisitor):
     """
     Traverses Python AST nodes to identify code anti-patterns, security risks,
-    and anti-best practices, attaching student viva defense guidance to each finding.
+    and anti-best practices. Attaches actionable viva defense guidance to each finding.
+    
+    This class leverages the `ast.NodeVisitor` mechanism to inspect specific syntax tree 
+    structures, such as assignments, function calls, and exception handlers, looking for
+    known vulnerabilities (e.g., hardcoded secrets, code injection risks, resource leaks, 
+    and silent exception swallowing).
     """
 
     def __init__(self, file_path: str, ignored_lines: frozenset):
@@ -24,13 +29,20 @@ class StaticAntiPatternAuditor(ast.NodeVisitor):
     # ------------------------------------------------------------------
     # Fix 4: helper — extract decorator names from a function definition
     # ------------------------------------------------------------------
-    def _decorator_names(self, node) -> List[str]:
+    def _decorator_names(self, node: ast.FunctionDef) -> List[str]:
         """
-        Return the flat name of every decorator attached to *node*.
-        Handles three forms:
-          @plain_name          → ast.Name        → plain_name
-          @obj.method          → ast.Attribute   → method
-          @obj.method(args)    → ast.Call        → method
+        Extracts and returns the flat names of every decorator attached to the given node.
+        
+        Handles three common decorator forms:
+          - @plain_name          -> ast.Name        -> 'plain_name'
+          - @obj.method          -> ast.Attribute   -> 'method'
+          - @obj.method(args)    -> ast.Call        -> 'method'
+          
+        Args:
+            node (ast.FunctionDef): The AST node representing the function definition.
+            
+        Returns:
+            List[str]: A list containing the string names of the decorators.
         """
         names = []
         for dec in node.decorator_list:
@@ -161,8 +173,19 @@ class StaticAntiPatternAuditor(ast.NodeVisitor):
 def audit_codebase(directory_path: str) -> Dict[str, Any]:
     """
     Main entry point for auditing a directory of Python code.
-    Traverses files, builds metrics, detects anti-patterns, and calculates
-    the Code Readiness Score (CRS).
+    
+    Recursively traverses the specified directory, reading all Python files 
+    (excluding virtual environments, VCS, and cache directories). Parses each file 
+    into an AST, runs the `StaticAntiPatternAuditor` to detect issues, and calculates 
+    the overall Code Readiness Score (CRS).
+    
+    Args:
+        directory_path (str): The absolute or relative path to the project directory.
+        
+    Returns:
+        Dict[str, Any]: A comprehensive dictionary containing the computed `crs_score`, 
+                        overall project metrics (`total_files`, `total_lines`, `total_functions`), 
+                        and a detailed list of all detected `issues`.
     """
     all_issues: List[Dict[str, Any]] = []
     total_files = 0
