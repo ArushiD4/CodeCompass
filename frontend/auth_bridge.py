@@ -17,30 +17,7 @@ try:
 except Exception as exc:  # missing file, bad path or a config error at import time
     auth_service, _IMPORT_ERROR = None, str(exc)
 
-# Exact function names from frontend/auth_service.py (verified against git HEAD).
-# Return shapes:
-#   login_with_third_party  -> {"success": bool, "token": str, "user_id": str}
-#   signup_with_third_party -> {"success": bool}  (no token on sign-up)
-#   reset_password_with_third_party -> {"success": bool}
-FUNCTION_NAMES = {
-    "sign_in": ("login_with_third_party",),
-    "sign_up": ("signup_with_third_party",),
-}
-
-
-def _call(action, *args):
-    if auth_service is None:
-        return {"success": False, "error": f"auth_service.py could not be imported: {_IMPORT_ERROR}"}
-    for name in FUNCTION_NAMES[action]:
-        func = getattr(auth_service, name, None)
-        if callable(func):
-            try:
-                result = func(*args)
-            except Exception as exc:
-                return {"success": False, "error": f"auth_service.{name} failed: {exc}"}
-            return result if isinstance(result, dict) else {"success": bool(result)}
-    return {"success": False, "error": f"auth_service.py has none of {FUNCTION_NAMES[action]}. "
-                                       "Edit FUNCTION_NAMES in auth_bridge.py."}
+# Direct calls to auth_service replacing previous getattr/FUNCTION_NAMES indirection.
 
 
 def _start_session(email, token):
@@ -67,11 +44,36 @@ def enter_offline():
 
 
 def sign_in(email, password):
-    if st.session_state["offline_mode"]:
+    if st.session_state.get("offline_mode"):
         enter_offline()
         return True, ""
-    return _finish(_call("sign_in", email, password), email)
+    if auth_service is None:
+        return False, f"auth_service could not be imported: {_IMPORT_ERROR}"
+    try:
+        result = auth_service.login_with_third_party(email, password)
+    except Exception as exc:
+        return False, f"auth_service.login_with_third_party failed: {exc}"
+    return _finish(result, email)
 
 
 def sign_up(email, password):
-    return _finish(_call("sign_up", email, password), email)
+    if auth_service is None:
+        return False, f"auth_service could not be imported: {_IMPORT_ERROR}"
+    try:
+        result = auth_service.signup_with_third_party(email, password)
+    except Exception as exc:
+        return False, f"auth_service.signup_with_third_party failed: {exc}"
+    return _finish(result, email)
+
+
+def reset_password(email):
+    if auth_service is None:
+        return False, f"auth_service could not be imported: {_IMPORT_ERROR}"
+    try:
+        result = auth_service.reset_password_with_third_party(email)
+    except Exception as exc:
+        return False, f"auth_service.reset_password_with_third_party failed: {exc}"
+    if result.get("success"):
+        return True, ""
+    return False, result.get("error") or "Password reset failed."
+
