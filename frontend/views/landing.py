@@ -1,7 +1,7 @@
 """landing.py — Public Landing Page View."""
 import streamlit as st
 import state
-from config import APP_NAME, RULES, SEVERITY_WEIGHT, TAGLINE
+from config import RULES, SEVERITY_WEIGHT, TAGLINE
 from components import intro, navbar
 from components.primitives import esc, footer, pill, sev_pill
 
@@ -9,6 +9,10 @@ from components.primitives import esc, footer, pill, sev_pill
 def _headline():
     return (f'<h1 class="cc-h1">Audit your code the way your examiner will read it.</h1>'
             f'<p class="cc-lede">{esc(TAGLINE)}</p>')
+
+
+def _scroll_cue():
+    return '<div class="cc-scroll-cue"><span class="cc-chevron"></span></div>'
 
 
 def _bento():
@@ -73,6 +77,7 @@ def render():
         c1, c2 = st.columns(2)
         c1.button("Enter project path", type="primary", width="stretch", on_click=_enter_path)
         c2.button("Run sample audit", width="stretch", on_click=state.open_sample)
+    st.html(_scroll_cue())
     st.html(_bento())
     st.html(_rules_accordion())
     st.html(footer())

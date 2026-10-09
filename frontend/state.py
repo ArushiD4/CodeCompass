@@ -1,12 +1,14 @@
 """state.py — Session State Management."""
+import os
 import streamlit as st
 from config import BACKEND_URL, SAMPLE_PATH
 
 DEFAULTS = {
-    "_page": "landing", "area": "Audit", "intro_seen": False,
+    "_page": "landing", "area": "Audit",
     "authenticated": False, "guest_mode": False,
     "user_token": None, "user_email": None, "offline_mode": False,
-    "backend_url": BACKEND_URL, "scan_name": "", "scan_path": "",
+    "backend_url": os.environ.get("CODECOMPASS_BACKEND_URL", BACKEND_URL),
+    "scan_name": "", "scan_path": "",
     "findings_limit": 8, "section": "Findings",
 }
 RESULT_KEYS = ("last_audit_data", "last_audit_path", "report_data",

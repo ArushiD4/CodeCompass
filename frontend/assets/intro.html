@@ -4,25 +4,28 @@
 <meta charset="UTF-8">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#07090E;color:#FFFFFF;font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;height:100vh;overflow:hidden;display:grid;place-items:center}
-.stage{position:relative;width:680px;height:480px;perspective:1000px;display:grid;place-items:center}
-.laptop{width:560px;height:350px;background:#121622;border:2px solid rgba(255,255,255,.12);border-radius:18px;padding:16px;box-shadow:0 0 50px rgba(0,245,160,.12);transform-style:preserve-3d;transform:rotateX(10deg);animation:laptopZoom 6s cubic-bezier(.4,0,.2,1) forwards}
-.screen{width:100%;height:100%;background:#090C14;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:24px;position:relative;overflow:hidden}
-.frame1{position:absolute;inset:24px;animation:fadeF1 6s forwards}
-.frame2{position:absolute;inset:24px;opacity:0;animation:fadeF2 6s forwards}
-.code-line{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;color:#B6BFCC}
-.squiggle{text-decoration:underline wavy #FF385C 2px}
+html,body{margin:0;height:100%;overflow:hidden;background:#07090E;color:#FFFFFF;font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;display:grid;place-items:center}
+.stage{position:relative;width:min(92vw,740px);height:min(60vh,440px);perspective:1100px;display:grid;place-items:center}
+.laptop{width:min(88vw,640px);height:min(52vh,370px);background:#121622;border:2px solid rgba(255,255,255,.12);border-radius:18px;padding:14px;box-shadow:0 0 70px rgba(0,245,160,.14);transform-style:preserve-3d;animation:laptopZoom 11s cubic-bezier(.4,0,.2,1) infinite}
+.screen{width:100%;height:100%;background:#090C14;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:22px;position:relative;overflow:hidden}
+.frame1{position:absolute;inset:22px;animation:fadeF1 11s infinite}
+.frame2{position:absolute;inset:22px;opacity:0;animation:fadeF2 11s infinite}
+.frame-hold{position:absolute;inset:0;display:grid;place-content:center;text-align:center;opacity:0;animation:fadeHold 11s infinite;pointer-events:none}
+.code-line{font-family:'JetBrains Mono',monospace;font-size:clamp(11px,1.6vmin,13px);line-height:1.9;color:#B6BFCC}
+.squiggle{text-decoration:underline wavy #FF385C 2px;animation:pulseSquiggle 1.5s ease-in-out infinite}
+@keyframes pulseSquiggle{0%,100%{text-decoration-color:#FF385C}50%{text-decoration-color:#FF859B}}
 .badge-red{display:inline-block;padding:4px 10px;border-radius:99px;background:rgba(255,56,92,.18);border:1px solid rgba(255,56,92,.4);color:#FF385C;font-size:11px;font-weight:700;margin-bottom:12px}
 .badge-green{display:inline-block;padding:4px 10px;border-radius:99px;background:rgba(0,245,160,.18);border:1px solid rgba(0,245,160,.4);color:#00F5A0;font-size:11px;font-weight:700;margin-bottom:12px}
-.caption{font-size:14px;color:#8A94A6;margin-top:16px}
-.laser{position:absolute;left:0;right:0;height:3px;background:#00F5A0;box-shadow:0 0 16px #00F5A0;top:0;opacity:0;animation:sweep 6s forwards}
-.title{font-size:32px;font-weight:800;letter-spacing:-.03em;color:#FFFFFF;margin-top:20px}
-.tagline{font-size:14px;color:#00F5A0;margin-top:4px}
-@keyframes fadeF1{0%,25%{opacity:1}32%,100%{opacity:0}}
-@keyframes fadeF2{0%,26%{opacity:0}35%,80%{opacity:1}95%,100%{opacity:0}}
-@keyframes sweep{25%{top:0;opacity:1}40%{top:100%;opacity:1}41%,100%{opacity:0}}
-@keyframes laptopZoom{0%,60%{transform:rotateX(10deg) scale(1);opacity:1}90%{transform:rotateX(0deg) scale(3.8);opacity:0}100%{transform:scale(4);opacity:0}}
-@media (prefers-reduced-motion:reduce){.laptop{animation:none;transform:none}.frame1{display:none}.frame2{opacity:1;animation:none}.laser{display:none}}
+.caption{font-size:clamp(12px,1.8vmin,14px);color:#8A94A6;margin-top:14px}
+.laser{position:absolute;left:0;right:0;height:3px;background:#00F5A0;box-shadow:0 0 18px #00F5A0;top:0;opacity:0;animation:sweep 11s infinite}
+.title-hold{font-size:clamp(26px,4.5vmin,36px);font-weight:800;letter-spacing:-.03em;color:#FFFFFF;text-shadow:0 0 30px rgba(0,245,160,.3)}
+.tagline-hold{font-size:clamp(13px,2vmin,15px);color:#00F5A0;margin-top:6px;font-weight:500}
+@keyframes fadeF1{0%,26%{opacity:1}29%,93%{opacity:0}97%,100%{opacity:1}}
+@keyframes fadeF2{0%,27%{opacity:0}30%,51%{opacity:1}54%,100%{opacity:0}}
+@keyframes sweep{0%,27%{top:0;opacity:0}28%{top:0;opacity:1}48%{top:100%;opacity:1}50%,100%{opacity:0}}
+@keyframes laptopZoom{0%,51%{transform:rotateX(10deg) scale(1);opacity:1}74%{transform:rotateX(0deg) scale(3.8);opacity:0}75%,92%{transform:rotateX(10deg) scale(0.85);opacity:0}96%,100%{transform:rotateX(10deg) scale(1);opacity:1}}
+@keyframes fadeHold{0%,76%{opacity:0;transform:scale(.95)}78%,90%{opacity:1;transform:scale(1)}92%,100%{opacity:0;transform:scale(1.04)}}
+@media (prefers-reduced-motion:reduce){.laptop{animation:none!important;transform:none!important;opacity:1!important}.frame1{display:none!important}.frame2{opacity:1!important;animation:none!important}.laser,.frame-hold{display:none!important}}
 </style>
 </head>
 <body>
@@ -40,17 +43,21 @@ body{background:#07090E;color:#FFFFFF;font-family:'Plus Jakarta Sans',system-ui,
       </div>
       <div class="frame2">
         <span class="badge-green">AST SCAN COMPLETE · ZERO RUNTIME EXECUTION</span>
-        <svg width="220" height="90" viewBox="0 0 220 90" style="margin:10px 0">
+        <svg width="220" height="90" viewBox="0 0 220 90" style="margin:8px 0;display:block">
           <circle cx="110" cy="18" r="10" fill="#00F5A0"/>
           <line x1="110" y1="28" x2="60" y2="60" stroke="#00F5A0" stroke-width="2"/>
           <line x1="110" y1="28" x2="160" y2="60" stroke="#00F5A0" stroke-width="2"/>
           <circle cx="60" cy="65" r="9" fill="#00D8F6"/>
           <circle cx="160" cy="65" r="9" fill="#00D8F6"/>
         </svg>
-        <div class="title">CodeCompass</div>
-        <div class="tagline">Navigate your code. Defend your logic.</div>
+        <p style="font-size:18px;font-weight:700;color:#FFFFFF">Syntax Tree Resolved</p>
+        <p class="caption" style="margin-top:6px">Deterministic static rule traversal.</p>
       </div>
     </div>
+  </div>
+  <div class="frame-hold">
+    <div class="title-hold">CodeCompass</div>
+    <div class="tagline-hold">Navigate your code. Defend your logic.</div>
   </div>
 </div>
 </body>

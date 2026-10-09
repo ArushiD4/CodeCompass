@@ -33,7 +33,7 @@ BASE_CSS = """
 
 .stApp{
   background-color:var(--bg)!important;color:var(--ink)!important;font-family:var(--font);
-  position:relative;min-height:100vh;
+  position:relative;min-height:100vh;overflow-x:hidden!important;
 }
 .stApp::before{
   content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
@@ -47,9 +47,19 @@ header[data-testid="stHeader"]{background:transparent!important;height:0}
 
 [data-testid="stMainBlockContainer"],.block-container{
   max-width:1160px;margin:0 auto;padding:1.25rem 1.5rem 4rem;position:relative;z-index:1;
+  overflow-x:hidden!important;
 }
 
-/* Primary buttons with accent gradient */
+/* Full-bleed intro container */
+.st-key-intro{
+  width:100vw!important;position:relative!important;left:50%!important;
+  margin-left:-50vw!important;margin-top:-1.25rem!important;
+}
+.st-key-intro iframe{
+  width:100vw!important;height:calc(100vh - 96px)!important;border:0!important;display:block;
+}
+
+/* Buttons */
 [data-testid="stBaseButton-primary"],[data-testid="stBaseButton-primaryFormSubmit"]{
   background:var(--brand-gradient)!important;border:none!important;color:#07090E!important;
   font-weight:700;border-radius:10px;box-shadow:0 0 20px rgba(0,245,160,.2);transition:all .2s ease;
@@ -94,6 +104,11 @@ details,[data-testid="stExpander"]{
 }
 .st-key-card_auth{max-width:480px;margin:1.5rem auto 0}
 .st-key-hero_cta{max-width:440px}
+
+/* Scroll cue down chevron */
+.cc-scroll-cue{display:flex;justify-content:center;margin:1.75rem 0 1.25rem;opacity:.7}
+.cc-chevron{width:16px;height:16px;border-right:2px solid var(--brand);border-bottom:2px solid var(--brand);transform:rotate(45deg);animation:cc-bounce 2s infinite}
+@keyframes cc-bounce{0%,100%{transform:rotate(45deg) translate(0,0);opacity:.4}50%{transform:rotate(45deg) translate(5px,5px);opacity:1}}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 """

@@ -75,25 +75,6 @@ def _call(method, path, timeout=FAST, **kwargs):
         return None, "The backend returned a response that is not valid JSON."
 
 
-@st.cache_data(ttl=10, show_spinner=False)
-def _ping(base):
-    try:
-        return requests.get(base + "/", timeout=2).status_code == 200
-    except requests.RequestException:
-        return False
-
-
-def health():
-    """
-    GET / (section 6.1) — Backend health check.
-    
-    Verifies backend connectivity. The result is cached for 10 seconds to 
-    prevent UI lag during rapid Streamlit script reruns.
-    
-    Returns:
-        bool: True if the backend responds with HTTP 200, False otherwise.
-    """
-    return _ping(_base())
 
 
 def run_audit(project_name, directory_path):

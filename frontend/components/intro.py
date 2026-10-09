@@ -1,4 +1,4 @@
-"""intro.py — Cinematic 6-second intro rendered via components.v1.html."""
+"""intro.py — Full-bleed looping cinematic intro rendered via components.v1.html."""
 import os
 import streamlit as st
 import streamlit.components.v1 as components
@@ -14,16 +14,8 @@ if os.path.exists(_INTRO_PATH):
         pass
 
 
-def _skip():
-    st.session_state["intro_seen"] = True
-
-
 def render():
-    if not INTRO_ENABLED or st.session_state.get("intro_seen", False):
-        return False
-
-    c_skip, _ = st.columns([1.5, 8.5])
-    c_skip.button("Skip intro →", key="btn_skip_intro", on_click=_skip)
-    if _INTRO_HTML:
-        components.html(_INTRO_HTML, height=520, scrolling=False)
-    return True
+    if not INTRO_ENABLED or not _INTRO_HTML:
+        return
+    with st.container(key="intro"):
+        components.html(_INTRO_HTML, height=800, scrolling=False)
