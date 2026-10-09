@@ -8,7 +8,8 @@ FAST, SCAN = 5, 180
 
 
 def _base():
-    return st.session_state["backend_url"].rstrip("/")
+    url = st.session_state.get("backend_url", "http://127.0.0.1:8000").rstrip("/")
+    return url.replace("localhost", "127.0.0.1")
 
 
 def _api_key() -> str:
@@ -97,6 +98,7 @@ def discover_projects(fetch, batch=25, workers=8, limit=500):
 
 @st.cache_data(ttl=15)
 def list_projects(base_url):
+    base_url = (base_url or "").replace("localhost", "127.0.0.1")
     key = _api_key()
     headers = {"X-API-Key": key} if key else {}
 

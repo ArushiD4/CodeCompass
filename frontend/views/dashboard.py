@@ -2,8 +2,8 @@
 import streamlit as st
 import api_client
 from config import AREAS, SECTIONS
-from components import (about_codecompass, compare_audits, findings, graph_view,
-                        hero, navbar, project_structure, roadmap, scan_form)
+from components import (about_codecompass, compare_audits, explain_files, findings,
+                        graph_view, hero, navbar, project_structure, roadmap, scan_form)
 
 EMPTY = ('<div class="cc-card" style="margin-top:1rem"><p class="cc-h2">No audit yet</p>'
          '<p class="cc-muted">Enter a project name and directory above, then run the audit. '
@@ -43,6 +43,8 @@ def _render_audit_area():
         graph_view.render()
     elif sec == "Project structure":
         project_structure.render()
+    elif sec == "Explain files":
+        explain_files.render()
 
 
 def render():

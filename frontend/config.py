@@ -6,7 +6,7 @@ TAGLINE = "Navigate your code. Defend your logic."
 PROJECT_CREDIT = "Final Year Academic Evaluation"
 INTRO_ENABLED = True
 
-BACKEND_URL = "http://localhost:8000"
+BACKEND_URL = "http://127.0.0.1:8000"
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -16,7 +16,7 @@ OFFLINE_EMAIL = "developer@offline"
 OFFLINE_TOKEN = "offline-token"
 
 AREAS = ("Audit", "About CodeCompass", "Roadmap", "Compare audits")
-SECTIONS = ("Findings", "Call graph", "Project structure")
+SECTIONS = ("Findings", "Call graph", "Project structure", "Explain files")
 
 # CRS health bands, ARCHITECTURE.md section 8.3: (minimum score, label, tone, guidance)
 CRS_BANDS = (

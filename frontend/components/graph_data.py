@@ -12,7 +12,7 @@ def module_of(file_path):
     return "/".join(parts[:-1]) or "(root)"
 
 
-def resolve_edges(graph, hide_builtins=True):
+def resolve_edges_detailed(graph, hide_builtins=True):
     nodes = {n["id"]: n for n in graph.get("nodes", [])}
     by_label = defaultdict(list)
     for node in nodes.values():
@@ -23,12 +23,20 @@ def resolve_edges(graph, hide_builtins=True):
         if src not in nodes or (hide_builtins and name in BUILTIN_EXCLUDE):
             continue
         targets = by_label.get(name, [])
+        if not targets:
+            continue
+        possible = len(targets) > 1
         same_file = [t for t in targets if nodes[t]["file"] == nodes[src]["file"]]
-        for dst in same_file or targets:  # prefer a same-file match
+        for dst in same_file or targets:
             if dst != src and (src, dst) not in seen:
                 seen.add((src, dst))
-                edges.append((src, dst))
+                edges.append((src, dst, possible))
     return nodes, edges
+
+
+def resolve_edges(graph, hide_builtins=True):
+    nodes, detailed = resolve_edges_detailed(graph, hide_builtins)
+    return nodes, [(s, d) for s, d, _ in detailed]
 
 
 def shape(graph, top_k, hide_isolated=True):

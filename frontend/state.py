@@ -12,7 +12,7 @@ DEFAULTS = {
     "findings_limit": 8, "section": "Findings",
 }
 RESULT_KEYS = ("last_audit_data", "last_audit_path", "report_data",
-               "graph_data", "graph_error")
+               "graph_data", "graph_error", "file_facts")
 
 
 def init():
