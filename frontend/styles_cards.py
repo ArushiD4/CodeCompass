@@ -12,31 +12,27 @@ CARDS_CSS = """
 .cc-dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block;box-shadow:0 0 8px currentColor}
 
 /* Type */
-.cc-hero-lockup{margin:2rem 0 1.25rem}
+.cc-hero-lockup{margin:2.5rem 0 1.5rem}
 .cc-brand-title{
-  font-size:clamp(2.8rem,5.5vw,4.5rem);font-weight:800;letter-spacing:-.04em;line-height:1.05;
+  font-size:clamp(3.2rem,6.5vw,5.5rem);font-weight:800;letter-spacing:-.04em;line-height:1.02;
   color:var(--ink);margin:0 0 .5rem;background:linear-gradient(180deg,#FFFFFF 40%,#B6BFCC 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
 .cc-hero-tagline{
-  font-size:clamp(1.2rem,2.2vw,1.75rem);font-weight:600;letter-spacing:-.02em;color:var(--brand);
-  margin:0 0 .75rem;line-height:1.3;
-}
-.cc-hero-support{
-  font-size:clamp(1rem,1.4vw,1.2rem);color:var(--ink-2);max-width:54ch;line-height:1.6;
-  margin:0 0 1.25rem;
+  font-size:clamp(1.3rem,2.4vw,2rem);font-weight:600;letter-spacing:-.02em;color:var(--brand);
+  margin:0 0 1.5rem;line-height:1.3;
 }
 .cc-h1{font-size:clamp(2.1rem,4.8vw,3.4rem);line-height:1.08;letter-spacing:-.035em;font-weight:700;
   color:var(--ink);max-width:18em;margin:2.5rem 0 .75rem}
 .cc-lede{font-size:1.15rem;line-height:1.6;color:var(--ink-2);max-width:56ch;margin:0 0 1.75rem}
-.cc-h2{font-size:1.1rem;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:0 0 .35rem}
-.cc-muted{color:var(--mute);font-size:.9rem;line-height:1.55;margin:0}
+.cc-h2{font-size:1.15rem;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:0 0 .4rem}
+.cc-muted{color:var(--mute);font-size:.92rem;line-height:1.6;margin:0}
 .cc-mono{font-family:var(--mono);font-size:.82rem;color:var(--ink-2)}
 
 /* Bento grid */
-.cc-feat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem;margin-top:2.5rem}
-.cc-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:1.4rem;backdrop-filter:blur(16px);position:relative}
-.cc-card .cc-muted{max-width:48ch}
+.cc-feat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(1.25rem,2vw,2rem);margin-top:2.5rem;width:100%}
+.cc-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:clamp(1.4rem,2.2vw,2rem);backdrop-filter:blur(16px);position:relative}
+.cc-card .cc-muted{max-width:65ch}
 .cc-bands{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
 
 /* Dashboard bento */

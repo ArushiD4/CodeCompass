@@ -11,7 +11,6 @@ def _headline():
         f'<div class="cc-hero-lockup">'
         f'<h1 class="cc-brand-title">{esc(APP_NAME)}</h1>'
         f'<p class="cc-hero-tagline">{esc(TAGLINE)}</p>'
-        f'<p class="cc-hero-support">Audit your code the way your examiner will read it.</p>'
         f'</div>'
     )
 

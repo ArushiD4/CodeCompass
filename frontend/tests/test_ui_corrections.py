@@ -1,6 +1,10 @@
 """test_ui_corrections.py — Verification for UI Corrections, Access Control & Bug Fixes."""
 import os
+import sys
 import pytest
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from streamlit.testing.v1 import AppTest
 from config import APP_NAME, TAGLINE, SAMPLE_PATH, AREAS
 from views.landing import _headline
@@ -13,22 +17,17 @@ def _no_exception(at: AppTest, context: str = ""):
 
 
 def test_landing_brand_hierarchy():
-    """Verify exact brand hierarchy: CodeCompass > Tagline > Supporting copy."""
+    """Verify exact brand hierarchy: CodeCompass > Tagline, and examiner sentence is removed."""
     hero_block = _headline()
     assert "cc-hero-lockup" in hero_block, "Hero lockup element not found"
 
-    # Verify order of text in hero lockup
     idx_brand = hero_block.find(APP_NAME)
     idx_tagline = hero_block.find(TAGLINE)
-    idx_support = hero_block.find("Audit your code the way your examiner will read it.")
 
     assert idx_brand != -1, "Brand name CodeCompass not found in hero lockup"
     assert idx_tagline != -1, "Tagline not found in hero lockup"
-    assert idx_support != -1, "Supporting copy not found in hero lockup"
-
-    assert idx_brand < idx_tagline < idx_support, (
-        f"Brand hierarchy incorrect: Brand({idx_brand}) < Tagline({idx_tagline}) < Support({idx_support})"
-    )
+    assert idx_brand < idx_tagline, "CodeCompass must be above Tagline"
+    assert "Audit your code the way your examiner will read it." not in hero_block
 
 
 def test_findings_answer_hidden_initially():
@@ -101,7 +100,43 @@ def test_authenticated_user_unrestricted():
 
 
 def test_platform_vs_project_navigation_separation():
-    """Verify About CodeCompass & Roadmap are platform routes, not project areas."""
+    """Verify About CodeCompass & Future Enhancements are platform routes, not project areas."""
     assert "About CodeCompass" not in AREAS
     assert "Roadmap" not in AREAS
+    assert "Future Enhancements" not in AREAS
     assert AREAS == ("Audit", "Compare audits")
+
+
+def test_unauthenticated_navbar_actions():
+    """Verify unauthenticated visitor sees Sign in (never Sign out) on About and Future Enhancements."""
+    for pg in ("landing", "about", "future_enhancements"):
+        at = AppTest.from_file(APP_PATH, default_timeout=30)
+        at.session_state["_page"] = pg
+        at.run()
+        _no_exception(at, f"unauth {pg}")
+        btn_labels = [b.label for b in at.button]
+        assert any("Sign in" in l for l in btn_labels), f"Expected 'Sign in' on {pg}"
+        assert not any("Sign out" in l for l in btn_labels), f"Unexpected 'Sign out' on {pg}"
+
+
+def test_authenticated_user_navigation_and_home_link():
+    """Verify authenticated user sees Sign out and can click brand logo to go home without losing session."""
+    at = AppTest.from_file(APP_PATH, default_timeout=30)
+    at.session_state["_page"] = "dashboard"
+    at.session_state["authenticated"] = True
+    at.session_state["user_email"] = "analyst@codecompass.dev"
+    at.run()
+    _no_exception(at, "auth dashboard")
+
+    # Brand button exists and clicks to landing
+    brand_btn = [b for b in at.button if APP_NAME in b.label]
+    assert brand_btn, "Brand logo button not found in navbar"
+    brand_btn[0].click().run()
+    _no_exception(at, "brand click")
+
+    assert at.session_state["_page"] == "landing"
+    assert at.session_state["authenticated"] is True
+    assert at.session_state["user_email"] == "analyst@codecompass.dev"
+    btn_labels = [b.label for b in at.button]
+    assert any("Sign out" in l for l in btn_labels), "Authenticated user should see Sign out on landing"
+    assert any("Dashboard" in l for l in btn_labels), "Authenticated user should see Dashboard nav on landing"

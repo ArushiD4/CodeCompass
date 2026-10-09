@@ -46,19 +46,36 @@ header[data-testid="stHeader"]{background:transparent!important;height:0}
 [data-testid="stToolbar"],[data-testid="stDecoration"],footer,#MainMenu{display:none!important}
 
 [data-testid="stMainBlockContainer"],.block-container{
-  width:100%!important;max-width:1440px!important;margin:0 auto!important;
-  padding:0.75rem clamp(1rem,2.5vw,2.5rem) 4rem!important;position:relative;z-index:1;
+  width:100%!important;max-width:min(96vw, 1800px)!important;margin:0 auto!important;
+  padding:0.75rem clamp(1.5rem,3.5vw,4rem) 4rem!important;position:relative;z-index:1;
   box-sizing:border-box;
 }
 
-/* Hero intro container */
+/* Edge-to-edge Hero intro container */
 .st-key-intro{
-  width:100%!important;margin:0 auto 1rem auto!important;
-  display:flex!important;justify-content:center!important;
+  width:100vw!important;position:relative!important;left:50%!important;right:50%!important;
+  margin-left:-50vw!important;margin-right:-50vw!important;
+  margin-top:-0.75rem!important;margin-bottom:1.5rem!important;
+  padding:0!important;overflow:hidden!important;
 }
+.st-key-intro > div,
+.st-key-intro [data-testid="stCustomComponentV1"],
 .st-key-intro iframe{
-  width:100%!important;height:calc(100vh - 120px)!important;
-  min-height:480px!important;max-height:720px!important;border:0!important;display:block;
+  width:100vw!important;height:calc(100vh - 76px)!important;
+  min-height:560px!important;border:0!important;display:block!important;
+  margin:0!important;padding:0!important;
+}
+
+/* Nav brand button */
+div[class*="st-key-nav_brand"] button{
+  background:transparent!important;border:none!important;box-shadow:none!important;
+  padding:0!important;color:var(--ink)!important;font-size:1.15rem!important;
+  font-weight:700!important;letter-spacing:-.02em!important;cursor:pointer!important;
+  display:inline-flex!important;align-items:center!important;gap:0.4rem!important;
+  justify-content:flex-start!important;
+}
+div[class*="st-key-nav_brand"] button:hover{
+  color:var(--brand)!important;transform:none!important;box-shadow:none!important;
 }
 
 /* Buttons */
