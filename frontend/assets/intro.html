@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#07090E;color:#FFFFFF;font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;height:100vh;overflow:hidden;display:grid;place-items:center}
+.stage{position:relative;width:680px;height:480px;perspective:1000px;display:grid;place-items:center}
+.laptop{width:560px;height:350px;background:#121622;border:2px solid rgba(255,255,255,.12);border-radius:18px;padding:16px;box-shadow:0 0 50px rgba(0,245,160,.12);transform-style:preserve-3d;transform:rotateX(10deg);animation:laptopZoom 6s cubic-bezier(.4,0,.2,1) forwards}
+.screen{width:100%;height:100%;background:#090C14;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:24px;position:relative;overflow:hidden}
+.frame1{position:absolute;inset:24px;animation:fadeF1 6s forwards}
+.frame2{position:absolute;inset:24px;opacity:0;animation:fadeF2 6s forwards}
+.code-line{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;color:#B6BFCC}
+.squiggle{text-decoration:underline wavy #FF385C 2px}
+.badge-red{display:inline-block;padding:4px 10px;border-radius:99px;background:rgba(255,56,92,.18);border:1px solid rgba(255,56,92,.4);color:#FF385C;font-size:11px;font-weight:700;margin-bottom:12px}
+.badge-green{display:inline-block;padding:4px 10px;border-radius:99px;background:rgba(0,245,160,.18);border:1px solid rgba(0,245,160,.4);color:#00F5A0;font-size:11px;font-weight:700;margin-bottom:12px}
+.caption{font-size:14px;color:#8A94A6;margin-top:16px}
+.laser{position:absolute;left:0;right:0;height:3px;background:#00F5A0;box-shadow:0 0 16px #00F5A0;top:0;opacity:0;animation:sweep 6s forwards}
+.title{font-size:32px;font-weight:800;letter-spacing:-.03em;color:#FFFFFF;margin-top:20px}
+.tagline{font-size:14px;color:#00F5A0;margin-top:4px}
+@keyframes fadeF1{0%,25%{opacity:1}32%,100%{opacity:0}}
+@keyframes fadeF2{0%,26%{opacity:0}35%,80%{opacity:1}95%,100%{opacity:0}}
+@keyframes sweep{25%{top:0;opacity:1}40%{top:100%;opacity:1}41%,100%{opacity:0}}
+@keyframes laptopZoom{0%,60%{transform:rotateX(10deg) scale(1);opacity:1}90%{transform:rotateX(0deg) scale(3.8);opacity:0}100%{transform:scale(4);opacity:0}}
+@media (prefers-reduced-motion:reduce){.laptop{animation:none;transform:none}.frame1{display:none}.frame2{opacity:1;animation:none}.laser{display:none}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="laptop">
+    <div class="screen">
+      <div class="laser"></div>
+      <div class="frame1">
+        <span class="badge-red">CRS 38/100 · Critical Issues Detected</span>
+        <div class="code-line"><span class="squiggle">API_SECRET = "sk-live-938210482901"</span></div>
+        <div class="code-line"><span class="squiggle">f = open("eval_records.csv")</span></div>
+        <div class="code-line"><span class="squiggle">try: eval(user_input)</span></div>
+        <div class="code-line"><span class="squiggle">except: pass</span></div>
+        <p class="caption">Your examiner will find the one line you forgot.</p>
+      </div>
+      <div class="frame2">
+        <span class="badge-green">AST SCAN COMPLETE · ZERO RUNTIME EXECUTION</span>
+        <svg width="220" height="90" viewBox="0 0 220 90" style="margin:10px 0">
+          <circle cx="110" cy="18" r="10" fill="#00F5A0"/>
+          <line x1="110" y1="28" x2="60" y2="60" stroke="#00F5A0" stroke-width="2"/>
+          <line x1="110" y1="28" x2="160" y2="60" stroke="#00F5A0" stroke-width="2"/>
+          <circle cx="60" cy="65" r="9" fill="#00D8F6"/>
+          <circle cx="160" cy="65" r="9" fill="#00D8F6"/>
+        </svg>
+        <div class="title">CodeCompass</div>
+        <div class="tagline">Navigate your code. Defend your logic.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

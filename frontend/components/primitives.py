@@ -1,6 +1,6 @@
 """Tiny HTML helpers. Every dynamic value passes through esc() first."""
 import html
-from config import SEVERITY_NAME, SEVERITY_TONE
+from config import APP_NAME, PROJECT_CREDIT, SEVERITY_NAME, SEVERITY_TONE, TAGLINE
 
 
 def esc(value):
@@ -15,3 +15,8 @@ def pill(text, tone="", dot=False):
 def sev_pill(severity):
     tone = SEVERITY_TONE.get(severity, "info")
     return pill(SEVERITY_NAME.get(severity, severity.title()), tone, dot=True)
+
+
+def footer():
+    return (f'<footer class="cc-footer"><p>{esc(APP_NAME)} · {esc(TAGLINE)}'
+            f' <span class="cc-credit">— {esc(PROJECT_CREDIT)}</span></p></footer>')

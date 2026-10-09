@@ -1,41 +1,48 @@
-"""
-dashboard.py — Main Application Dashboard View.
-
-Renders the core authenticated interface. Orchestrates the display of the
-scan configuration form, the high-level Code Readiness Score (CRS) hero banner,
-and the tabbed content sections (Findings, Call Graph, Architecture).
-"""
+"""dashboard.py — Main Application Dashboard with Workspace navigation."""
 import streamlit as st
-from config import SECTIONS
-from components import architecture, findings, graph_view, hero, navbar, scan_form
+from config import AREAS, SECTIONS
+from components import (about_codecompass, findings, fix_rescan, graph_view,
+                        hero, navbar, playbook, project_structure, roadmap,
+                        scan_form)
 
 EMPTY = ('<div class="cc-card" style="margin-top:1rem"><p class="cc-h2">No audit yet</p>'
          '<p class="cc-muted">Enter a project name and directory above, then run the audit. '
          'You will get a readiness score, findings with defense tips, and a call graph.</p></div>')
 
 
-def render():
-    """
-    Renders the complete dashboard interface.
-    
-    Validates the presence of recent audit data in the session state. If data exists,
-    it orchestrates the rendering of the top-level hero metrics and delegates the 
-    lower-half rendering to the currently selected sub-view (Findings, Call graph, 
-    or Architecture). If no data exists, an empty placeholder is shown.
-    """
+def _render_audit_area():
     ss = st.session_state
-    navbar.render("dashboard")
     scan_form.render()
     audit = ss.get("last_audit_data")
     if not audit:
         st.html(EMPTY)
         return
     hero.render(audit, ss.get("report_data"))
-    section = st.segmented_control("Section", SECTIONS, default=SECTIONS[0], key="section",
-                                   label_visibility="collapsed") or SECTIONS[0]
-    if section == "Findings":
+    sec = st.segmented_control("Project Section", SECTIONS,
+                               default=ss.get("section", SECTIONS[0]),
+                               key="section", label_visibility="collapsed") or SECTIONS[0]
+    if sec == "Findings":
         findings.render(audit.get("issues", []))
-    elif section == "Call graph":
+    elif sec == "Call graph":
         graph_view.render()
-    else:
-        architecture.render()
+    elif sec == "Project structure":
+        project_structure.render()
+
+
+def render():
+    ss = st.session_state
+    navbar.render("dashboard")
+    area = st.segmented_control("Workspace Area", AREAS,
+                                default=ss.get("area", "Audit"),
+                                key="area", label_visibility="collapsed") or "Audit"
+
+    if area == "Audit":
+        _render_audit_area()
+    elif area == "Playbook":
+        playbook.render()
+    elif area == "About CodeCompass":
+        about_codecompass.render()
+    elif area == "Roadmap":
+        roadmap.render()
+    elif area == "Fix and rescan":
+        fix_rescan.render()
