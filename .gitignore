@@ -183,6 +183,7 @@ cython_debug/
 .env
 *.db
 *.sqlite3
+backend/*.db
 *.db-wal
 *.db-shm
 backend/app/uploads
