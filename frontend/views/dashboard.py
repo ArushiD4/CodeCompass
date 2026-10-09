@@ -1,8 +1,7 @@
-"""dashboard.py — Main Application Dashboard with Workspace navigation."""
 import streamlit as st
 import api_client
 from config import AREAS, SECTIONS
-from components import (compare_audits, explain_files, findings,
+from components import (explain_files, findings,
                         graph_view, hero, navbar, project_structure, scan_form)
 
 EMPTY = ('<div class="cc-card" style="margin-top:1rem"><p class="cc-h2">No audit yet</p>'
@@ -58,5 +57,3 @@ def render():
 
     if area == "Audit":
         _render_audit_area()
-    elif area == "Compare audits":
-        compare_audits.render()
