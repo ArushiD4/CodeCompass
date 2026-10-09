@@ -1,5 +1,6 @@
 import ast
 import os
+from pathlib import Path
 from typing import List, Dict, Any, Set
 
 # Fix 2: Maximum file size allowed before the AST parser is invoked.
@@ -226,8 +227,7 @@ def audit_codebase(directory_path: str) -> Dict[str, Any]:
                 continue
 
             try:
-                with open(full_path, "r", encoding="utf-8") as f:
-                    code = f.read()
+                code = Path(full_path).read_text(encoding="utf-8")
 
                 lines = code.splitlines()
                 total_lines += len(lines)
