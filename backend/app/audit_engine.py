@@ -2,6 +2,7 @@ import ast
 import os
 from pathlib import Path
 from typing import List, Dict, Any, Set
+from app.entrypoints import entrypoint
 
 # Fix 2: Maximum file size allowed before the AST parser is invoked.
 # Files larger than this are skipped with an INFO finding rather than
@@ -63,6 +64,7 @@ class StaticAntiPatternAuditor(ast.NodeVisitor):
     # Visitor rules
     # ------------------------------------------------------------------
 
+    @entrypoint()
     def visit_Assign(self, node: ast.Assign):
         """
         Rule 1: Detect Hardcoded Credentials & Plaintext Secrets.
@@ -91,6 +93,7 @@ class StaticAntiPatternAuditor(ast.NodeVisitor):
                             })
         self.generic_visit(node)
 
+    @entrypoint()
     def visit_Call(self, node: ast.Call):
         """
         Rule 2: Detect Resource Leaks (Unclosed File Handles) & Dangerous Call Executions.
@@ -134,6 +137,7 @@ class StaticAntiPatternAuditor(ast.NodeVisitor):
 
         self.generic_visit(node)
 
+    @entrypoint()
     def visit_FunctionDef(self, node: ast.FunctionDef):
         """
         Track defined functions for dead-code detection.
@@ -150,6 +154,7 @@ class StaticAntiPatternAuditor(ast.NodeVisitor):
     # Treat async defs identically to sync defs
     visit_AsyncFunctionDef = visit_FunctionDef
 
+    @entrypoint()
     def visit_ExceptHandler(self, node: ast.ExceptHandler):
         """
         Rule 3: Detect Silent Exception Swallowing (`except: pass`).

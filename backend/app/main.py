@@ -7,6 +7,7 @@ from app.database import engine, Base, get_db
 from app.models import Project, AuditIssue
 from app.audit_engine import audit_codebase
 from app.graph_engine import generate_codebase_graph
+from app.entrypoints import entrypoint
 
 Base.metadata.create_all(bind=engine)
 
@@ -27,6 +28,7 @@ app = FastAPI(
 _API_KEY = os.getenv("CODECOMPASS_API_KEY", "").strip()
 
 
+@entrypoint()
 def verify_api_key(x_api_key: str = Header("", alias="X-API-Key")):
     """
     FastAPI dependency — enforces the static API key boundary.
