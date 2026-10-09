@@ -1,10 +1,18 @@
-"""Audit findings: severity filter, cards with the Viva Defense Tip, pagination."""
+"""findings.py — Audit findings: severity & rule filters, Viva defense expander."""
 import streamlit as st
 from config import GLOBAL_FILE, SEVERITIES, SEVERITY_TONE
-from components.primitives import esc, sev_pill
+from components.primitives import esc, pill, sev_pill
 
 PAGE = 8
-FILTERS = ("All", "Critical", "Warning", "Info")
+SEV_FILTERS = ("All", "Critical", "Warning", "Info")
+
+QUESTIONS = {
+    "Hardcoded Credential": "Why use static AST analysis instead of running unit tests for secrets?",
+    "Unclosed Resource Handle": "Why does bare open() pose a leak risk if Python's garbage collector frees unreferenced handles?",
+    "Dynamic Code Injection": "Why is eval() prohibited rather than linting the arguments?",
+    "Silent Exception Swallowing": "Why is 'except: pass' a critical defect when error handling is intentional?",
+    "Orphaned Function": "How does your tool prevent false positives on entry points when flagging dead code?",
+}
 
 
 def _location(issue):
@@ -15,11 +23,28 @@ def _location(issue):
 
 def _card(issue):
     tone = SEVERITY_TONE.get(issue.get("severity"), "info")
-    return (f'<article class="cc-find tone-{tone}"><div class="cc-find-top">'
-            f'<div><div class="cc-rule">{esc(issue.get("rule_name", "Finding"))}</div>'
-            f'<div class="cc-mono">{esc(_location(issue))}</div></div>'
-            f'{sev_pill(issue.get("severity", "INFO"))}</div>'
-            f'<div class="cc-tip"><b>Viva Defense Tip</b>{esc(issue.get("viva_tip", ""))}</div></article>')
+    rule = issue.get("rule_name", "Finding")
+    tip = issue.get("viva_tip", "")
+    first_line = tip.split(".")[0] + "." if "." in tip else tip
+    question = QUESTIONS.get(rule, "What is the architectural risk and remediation for this pattern?")
+
+    return (
+        f'<article class="cc-find tone-{tone}">'
+        f'<div class="cc-find-top">'
+        f'<div><div class="cc-rule">{esc(rule)}</div>'
+        f'<div class="cc-mono">{esc(_location(issue))}</div></div>'
+        f'<div>{sev_pill(issue.get("severity", "INFO"))}</div>'
+        f'</div>'
+        f'<div class="cc-tip" style="margin-top:.75rem">'
+        f'<b>Viva Defense Summary:</b> {esc(first_line)}'
+        f'<details style="margin-top:.5rem;padding:0;background:transparent;border:none">'
+        f'<summary style="cursor:pointer;color:var(--brand);font-size:.82rem;font-weight:600">Read defense tips & examiner Q →</summary>'
+        f'<div style="margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--line)">'
+        f'<b style="color:var(--ink);font-size:.82rem">Examiner Question:</b> {esc(question)}<br>'
+        f'<b style="color:var(--ink);font-size:.82rem;margin-top:.4rem">Full Defense Strategy:</b> {esc(tip)}'
+        f'</div></details>'
+        f'</div></article>'
+    )
 
 
 def _more():
@@ -29,17 +54,28 @@ def _more():
 def render(issues):
     ss = st.session_state
     if not issues:
-        st.html('<div class="cc-card tone-good" style="border-color:var(--tline);background:var(--tbg)">'
+        st.html('<div class="cc-card tone-good" style="margin-top:1rem">'
                 '<p class="cc-h2">No findings</p><p class="cc-muted">None of the five rules matched. '
-                'Be ready to explain what you checked.</p></div>')
+                'Zero-execution AST analysis complete.</p></div>')
         return
-    choice = st.segmented_control("Severity", FILTERS, default="All", key="sev_filter",
-                                  label_visibility="collapsed") or "All"
-    rank = {s: i for i, s in enumerate(SEVERITIES)}
-    shown = [i for i in issues if choice == "All" or i.get("severity") == choice.upper()]
+
+    c_sev, c_rule = st.columns([1, 1], vertical_alignment="center")
+    sev_choice = c_sev.segmented_control("Severity", SEV_FILTERS, default="All", key="f_sev",
+                                         label_visibility="collapsed") or "All"
+    rule_options = ["All Rules"] + sorted(list({i.get("rule_name", "") for i in issues}))
+    rule_choice = c_rule.selectbox("Rule Category", rule_options, key="f_rule",
+                                   label_visibility="collapsed") or "All Rules"
+
+    shown = [
+        i for i in issues
+        if (sev_choice == "All" or i.get("severity") == sev_choice.upper())
+        and (rule_choice == "All Rules" or i.get("rule_name") == rule_choice)
+    ]
+    rank = {s: idx for idx, s in enumerate(SEVERITIES)}
     shown.sort(key=lambda i: (rank.get(i.get("severity"), 9), i.get("file_path", ""), i.get("line_number", 0)))
+
     limit = ss["findings_limit"]
     st.html(f'<div class="cc-finds">{"".join(_card(i) for i in shown[:limit])}</div>')
     if len(shown) > limit:
-        st.button(f"Show {min(PAGE, len(shown) - limit)} more of {len(shown) - limit} remaining",
+        st.button(f"Show {min(PAGE, len(shown) - limit)} more ({len(shown) - limit} remaining)",
                   on_click=_more)

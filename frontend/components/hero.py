@@ -1,6 +1,6 @@
 """Hero: Code Readiness Score ring plus KPI bento. Colour follows the CRS band."""
 import streamlit as st
-from config import (CRS_BANDS, SEVERITIES, SEVERITY_NAME, SEVERITY_TONE, SEVERITY_WEIGHT)
+from config import CRS_BANDS, SEVERITIES, SEVERITY_NAME, SEVERITY_TONE, SEVERITY_WEIGHT
 from components.primitives import esc, pill
 
 
@@ -11,9 +11,9 @@ def band_for(score):
     return CRS_BANDS[-1][1:]
 
 
-def _ring(score):
+def _ring(score, tone):
     pct = max(0, min(score, 100))
-    return (f'<div class="cc-ring"><div class="cc-ring-arc" style="--p:{pct}"></div>'
+    return (f'<div class="cc-ring"><div class="cc-ring-arc" style="--p:{pct};--t:var(--{tone})"></div>'
             f'<div class="cc-ring-num"><b>{score}</b><span>out of 100</span></div></div>')
 
 
@@ -30,7 +30,7 @@ def _hero(score, counts):
     label, tone, advice = band_for(score)
     return (f'<div class="cc-hero tone-{tone}"><div class="cc-hero-head">'
             f'<span class="cc-hero-title">Code Readiness Score</span>{pill(label, tone, dot=True)}</div>'
-            f'<div class="cc-hero-body">{_ring(score)}<p class="cc-advice">{esc(advice)}</p></div>'
+            f'<div class="cc-hero-body">{_ring(score, tone)}<p class="cc-advice">{esc(advice)}</p></div>'
             f'<code class="cc-math">{esc(_math_line(score, counts))}</code></div>')
 
 
