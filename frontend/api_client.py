@@ -1,40 +1,26 @@
-"""
-api_client.py — REST API Client layer.
-
-Manages all HTTP communication with the FastAPI backend. Abstracts network errors,
-JSON parsing, and authentication headers, ensuring the UI layer only ever receives 
-clean data payloads or user-friendly error strings.
-
-Contracts defined in ARCHITECTURE.md section 6.
-"""
+"""api_client.py — REST API Client layer."""
 import os
+from concurrent.futures import ThreadPoolExecutor
 import requests
 import streamlit as st
 
-FAST, SCAN = 5, 180  # timeouts in seconds
+FAST, SCAN = 5, 180
 
 
 def _base():
     return st.session_state["backend_url"].rstrip("/")
 
 
-# Fix 1: Load the API key from environment variable, Streamlit secrets, or fallback to dev default.
-# Ensures the app functions whether launched from the root directory, frontend directory, or shell.
 def _api_key() -> str:
-    # 1. Direct environment variable (takes precedence if exported in shell/bat)
     env_key = os.getenv("CODECOMPASS_API_KEY", "")
     if env_key:
         return env_key
-
-    # 2. Streamlit secrets (.streamlit/secrets.toml)
     try:
         secret_key = st.secrets.get("CODECOMPASS_API_KEY", "")
         if secret_key:
             return secret_key
     except Exception:
         pass
-
-    # 3. Default local development key fallback
     return "pink-clounding"
 
 
@@ -51,18 +37,14 @@ def _explain(resp):
 
 
 def _call(method, path, timeout=FAST, **kwargs):
-    # Fix 1: inject the API key header into every outbound request.
-    # If the key is empty the header is omitted, matching the backend's permissive mode.
     headers = kwargs.pop("headers", {})
     key = _api_key()
     if key:
         headers["X-API-Key"] = key
-
     try:
         resp = requests.request(method, _base() + path, timeout=timeout, headers=headers, **kwargs)
     except requests.ConnectionError:
-        return None, (f"Cannot reach the backend at {_base()}. "
-                      "Start it with: uvicorn main:app --port 8000")
+        return None, f"Cannot reach the backend at {_base()}. Start it with: uvicorn main:app --port 8000"
     except requests.Timeout:
         return None, "The backend took too long to answer. Try a smaller directory."
     except requests.RequestException as exc:
@@ -75,45 +57,67 @@ def _call(method, path, timeout=FAST, **kwargs):
         return None, "The backend returned a response that is not valid JSON."
 
 
-
-
 def run_audit(project_name, directory_path):
-    """
-    POST /api/audit (6.2) — Executes a full AST static analysis scan.
-    
-    Args:
-        project_name (str): Arbitrary name assigned to this audit run.
-        directory_path (str): The local file system path to the target codebase.
-        
-    Returns:
-        tuple: (dict_of_results, error_message_string)
-    """
     params = {"project_name": project_name, "directory_path": directory_path}
     return _call("POST", "/api/audit", SCAN, params=params)
 
 
 def get_project(project_id):
-    """
-    GET /api/projects/{id} (6.3) — Retrieves a historical audit report.
-    
-    Args:
-        project_id (int): The database primary key of the project.
-        
-    Returns:
-        tuple: (dict_of_report_data, error_message_string)
-    """
     return _call("GET", f"/api/projects/{int(project_id)}")
 
 
 def get_graph(directory_path):
-    """
-    GET /api/graph (6.4) — Retrieves call-graph nodes and edges for visualisation.
-    
-    Args:
-        directory_path (str): The local file system path to the target codebase.
-        
-    Returns:
-        tuple: (dict_of_graph_data, error_message_string)
-    """
     data, err = _call("GET", "/api/graph", SCAN, params={"directory_path": directory_path})
     return (data or {}).get("graph"), err
+
+
+def discover_projects(fetch, batch=25, workers=8, limit=500):
+    projects = []
+    current_id = 1
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        while current_id <= limit:
+            batch_ids = list(range(current_id, min(current_id + batch, limit + 1)))
+            if not batch_ids:
+                break
+            results = list(executor.map(fetch, batch_ids))
+            batch_successes = []
+            for proj, fatal_err in results:
+                if fatal_err:
+                    return [], fatal_err
+                if proj:
+                    batch_successes.append(proj)
+            if not batch_successes:
+                break
+            projects.extend(batch_successes)
+            current_id += batch
+
+    projects.sort(key=lambda p: (str(p.get("created_at") or ""), int(p.get("id") or 0)), reverse=True)
+    return projects, None
+
+
+@st.cache_data(ttl=15)
+def list_projects(base_url):
+    key = _api_key()
+    headers = {"X-API-Key": key} if key else {}
+
+    def fetch(pid):
+        try:
+            r = requests.get(f"{base_url.rstrip('/')}/api/projects/{pid}", headers=headers, timeout=FAST)
+            if r.status_code == 200:
+                data = r.json()
+                return data.get("project", data), None
+            if r.status_code == 404:
+                return None, None
+            if r.status_code >= 500:
+                return None, f"Backend returned HTTP {r.status_code}."
+            if r.status_code in (401, 403):
+                return None, "Backend authentication failed: invalid or missing API key."
+            return None, f"Backend returned HTTP {r.status_code}."
+        except requests.ConnectionError:
+            return None, f"Cannot reach the backend at {base_url}."
+        except requests.Timeout:
+            return None, "Request timed out."
+        except Exception as exc:
+            return None, str(exc)
+
+    return discover_projects(fetch)

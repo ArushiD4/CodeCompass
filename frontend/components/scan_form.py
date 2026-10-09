@@ -4,7 +4,7 @@ import streamlit as st
 import api_client
 import state
 from config import APP_NAME
-from components import scan_loader
+from components import report_picker, scan_loader
 from components.primitives import esc
 
 
@@ -51,6 +51,7 @@ def _scan(name, path):
                   graph_data=graph, graph_error=graph_err)
         status.update(label=f"Scan complete · CRS {audit.get('crs_score', 0)}",
                       state="complete", expanded=False)
+        api_client.list_projects.clear()
 
 
 def render():
@@ -64,14 +65,42 @@ def render():
         path = c_path.text_input("Local directory path", key="scan_path", placeholder="D:\\Projects\\repo")
         run = c_run.button("Run audit", type="primary", width="stretch")
         with st.expander("Open a historical report"):
-            c_id, c_open = st.columns([3, 1.4], vertical_alignment="bottom")
-            pid = c_id.number_input("Project ID", min_value=1, step=1, key="saved_id")
-            if c_open.button("Open Report", width="stretch"):
-                data, err = api_client.get_project(pid)
-                if not err and data:
-                    p = data["project"]
-                    state.clear_results()
-                    ss.update(report_data=data, last_audit_data={**p, "project_id": p["id"], "issues": data["issues"]})
+            base_url = ss.get("backend_url", "http://localhost:8000")
+            projects, proj_map, label_map, err = report_picker.load_report_options(base_url)
+            if err:
+                if "Cannot reach the backend" in err:
+                    _signal_lost_card()
+                else:
+                    st.error(err)
+            elif not projects:
+                st.info("No previous audits yet.")
+            else:
+                visible = projects[:100]
+                options = [p["id"] for p in visible]
+                c_sel, c_open = st.columns([4, 1.5], vertical_alignment="bottom")
+                sel_id = c_sel.selectbox(
+                    "Previous audits",
+                    options=options,
+                    format_func=lambda pid: label_map.get(pid, f"Audit #{pid}"),
+                    index=None,
+                    placeholder="Search by project name",
+                    key="hist_report_id"
+                )
+                open_clicked = c_open.button("Open report", disabled=(sel_id is None), width="stretch")
+                if len(projects) > 100:
+                    st.caption(f"Showing the newest 100 of {len(projects)} audits.")
+                if open_clicked and sel_id is not None:
+                    data, err = api_client.get_project(sel_id)
+                    if err or not data:
+                        st.error(err or "Failed to load report.")
+                    else:
+                        p = data["project"]
+                        expected_name = proj_map.get(sel_id, {}).get("project_name")
+                        if expected_name and p.get("project_name") != expected_name:
+                            st.warning("The project name differs from the label. The database may have been reset.")
+                        state.clear_results()
+                        ss.update(report_data=data, last_audit_data={**p, "project_id": p["id"], "issues": data["issues"]})
+                        st.rerun()
 
     if ss.pop("autorun", False) or run:
         _scan(name.strip(), path.strip())
