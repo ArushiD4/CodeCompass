@@ -13,7 +13,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 FIXTURES_DIR = REPO_ROOT / "tests" / "fixtures"
 SAMPLE_PATH = str((FIXTURES_DIR / "sample_moderate").resolve())
 OFFLINE_EMAIL = "developer@offline"
-OFFLINE_TOKEN = "offline-token"
+OFFLINE_TOKEN = os.environ.get("CODECOMPASS_OFFLINE_TOKEN", "")
 
 AREAS = ("Audit", "Compare audits")
 SECTIONS = ("Findings", "Call graph", "Project structure", "Explain files")
