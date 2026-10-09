@@ -1,63 +1,103 @@
-"""Design system, part 1: tokens and Streamlit widget overrides."""
+"""Design system, part 1: tokens, global dark theme, and Streamlit overrides."""
+import os
 import streamlit as st
 from styles_cards import CARDS_CSS
 
+_FONTS_FILE = os.path.join(os.path.dirname(__file__), "assets", "fonts.css")
+_FONTS_CSS = ""
+if os.path.exists(_FONTS_FILE):
+    try:
+        with open(_FONTS_FILE, "r", encoding="utf-8") as f:
+            _FONTS_CSS = f.read()
+    except Exception:
+        pass
+
 BASE_CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
-  --bg:#F5F6F8; --surface:#FFFFFF; --line:#E2E5EA; --line-strong:#CDD2DA;
-  --ink:#0E1624; --ink-2:#465165; --mute:#7C8798; --brand:#2B50E6;
-  --good:#0F7B55; --good-bg:#E5F5EE; --good-line:#B7E2D0;
-  --warn:#A65A00; --warn-bg:#FFF2D9; --warn-line:#F2D49B;
-  --bad:#B42318;  --bad-bg:#FDEBE9;  --bad-line:#F4C3BE;
-  --info:#2B50E6; --info-bg:#EBEFFD; --info-line:#C5D1FA;
+  --bg:#07090E; --surface:rgba(15,20,30,.75); --surface-solid:#0F141E;
+  --line:rgba(255,255,255,.08); --line-strong:rgba(255,255,255,.16);
+  --ink:#FFFFFF; --ink-2:#B6BFCC; --mute:#8A94A6;
+  --brand:#00F5A0; --brand-hover:#00D8F6; --brand-gradient:linear-gradient(135deg,#00F5A0,#00D8F6);
+  --good:#00F5A0; --good-bg:rgba(0,245,160,.12); --good-line:rgba(0,245,160,.30);
+  --warn:#FFB800; --warn-bg:rgba(255,184,0,.12); --warn-line:rgba(255,184,0,.30);
+  --bad:#FF385C;  --bad-bg:rgba(255,56,92,.12);  --bad-line:rgba(255,56,92,.30);
+  --info:#00D8F6; --info-bg:rgba(0,216,246,.12); --info-line:rgba(0,216,246,.30);
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
+
 .tone-good{--t:var(--good);--tbg:var(--good-bg);--tline:var(--good-line)}
 .tone-warn{--t:var(--warn);--tbg:var(--warn-bg);--tline:var(--warn-line)}
 .tone-bad{--t:var(--bad);--tbg:var(--bad-bg);--tline:var(--bad-line)}
 .tone-info{--t:var(--info);--tbg:var(--info-bg);--tline:var(--info-line)}
 
-.stApp{background:var(--bg);color:var(--ink)}
-.stApp,.stApp p,.stApp label,.stApp input,.stApp button,.stApp textarea{
-  font-family:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif}
-header[data-testid="stHeader"]{background:transparent;height:0}
+.stApp{
+  background-color:var(--bg)!important;color:var(--ink)!important;font-family:var(--font);
+  position:relative;min-height:100vh;
+}
+.stApp::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 20% 15%,rgba(4,28,36,.55),transparent 70%),
+             radial-gradient(ellipse 55% 45% at 85% 80%,rgba(18,14,36,.45),transparent 70%);
+}
+
+.stApp p,.stApp label,.stApp input,.stApp button,.stApp textarea{font-family:var(--font)}
+header[data-testid="stHeader"]{background:transparent!important;height:0}
 [data-testid="stToolbar"],[data-testid="stDecoration"],footer,#MainMenu{display:none!important}
 
-/* One centred column: nothing stretches across an ultrawide monitor. */
 [data-testid="stMainBlockContainer"],.block-container{
-  max-width:1160px;margin:0 auto;padding:1.25rem 1.5rem 4rem}
+  max-width:1160px;margin:0 auto;padding:1.25rem 1.5rem 4rem;position:relative;z-index:1;
+}
 
-/* Buttons */
-[data-testid="stBaseButton-primary"],[data-testid="stBaseButton-secondary"],
-[data-testid="stBaseButton-secondaryFormSubmit"],[data-testid="stBaseButton-primaryFormSubmit"]{
-  border-radius:8px;font-weight:600;box-shadow:none;transition:background .15s,border-color .15s}
+/* Primary buttons with accent gradient */
 [data-testid="stBaseButton-primary"],[data-testid="stBaseButton-primaryFormSubmit"]{
-  background:var(--brand);border:1px solid var(--brand);color:#fff}
+  background:var(--brand-gradient)!important;border:none!important;color:#07090E!important;
+  font-weight:700;border-radius:10px;box-shadow:0 0 20px rgba(0,245,160,.2);transition:all .2s ease;
+}
 [data-testid="stBaseButton-primary"]:hover,[data-testid="stBaseButton-primaryFormSubmit"]:hover{
-  background:#1F3FC4;border-color:#1F3FC4;color:#fff}
-[data-testid="stBaseButton-secondary"]{background:var(--surface);border:1px solid var(--line-strong);color:var(--ink)}
-[data-testid="stBaseButton-secondary"]:hover{border-color:var(--ink-2);color:var(--ink)}
+  box-shadow:0 0 28px rgba(0,216,246,.4);transform:translateY(-1px);
+}
+[data-testid="stBaseButton-secondary"]{
+  background:var(--surface)!important;border:1px solid var(--line)!important;color:var(--ink)!important;
+  font-weight:600;border-radius:10px;backdrop-filter:blur(12px);transition:all .2s ease;
+}
+[data-testid="stBaseButton-secondary"]:hover{
+  border-color:var(--line-strong)!important;background:rgba(25,32,48,.8)!important;
+}
 button:focus-visible,input:focus-visible{outline:2px solid var(--brand)!important;outline-offset:2px}
 
-/* Inputs, tabs, status */
+/* Inputs & containers */
 [data-testid="stTextInputRootElement"],[data-testid="stNumberInputContainer"]{
-  border:1px solid var(--line-strong)!important;border-radius:8px!important;background:var(--surface)!important}
+  border:1px solid var(--line-strong)!important;border-radius:10px!important;
+  background:rgba(11,15,24,.9)!important;backdrop-filter:blur(12px);
+}
 [data-testid="stTextInputRootElement"]:focus-within,[data-testid="stNumberInputContainer"]:focus-within{
-  border-color:var(--brand)!important}
-button[role="tab"]{font-weight:500}
-details,[data-testid="stExpander"]{border-radius:12px!important;border-color:var(--line)!important;background:var(--surface)}
-[data-testid="stSegmentedControl"] button{font-weight:500}
+  border-color:var(--brand)!important;box-shadow:0 0 0 1px var(--brand)!important;
+}
+input{color:var(--ink)!important}
+button[role="tab"]{font-weight:600;color:var(--ink-2)}
+button[role="tab"][aria-selected="true"]{color:var(--brand)!important}
 
-/* Keyed containers become cards. Key names start with "card_". */
-[class*="st-key-card_"]{background:var(--surface);border:1px solid var(--line);
-  border-radius:14px;padding:1.1rem 1.25rem}
-.st-key-card_auth{max-width:440px;margin:2.5rem auto 0}
-.st-key-hero_cta{max-width:380px}
+details,[data-testid="stExpander"]{
+  border-radius:12px!important;border:1px solid var(--line)!important;
+  background:var(--surface)!important;backdrop-filter:blur(16px);
+}
+[data-testid="stSegmentedControl"]{background:rgba(11,15,24,.8);border-radius:10px;padding:3px}
+[data-testid="stSegmentedControl"] button{font-weight:600;border-radius:8px!important;color:var(--ink-2)}
+[data-testid="stSegmentedControl"] button[aria-checked="true"]{
+  background:var(--surface-solid)!important;color:var(--brand)!important;border:1px solid var(--line-strong);
+}
+
+[class*="st-key-card_"]{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:16px;padding:1.4rem;backdrop-filter:blur(16px);
+}
+.st-key-card_auth{max-width:480px;margin:1.5rem auto 0}
+.st-key-hero_cta{max-width:440px}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 """
 
 
 def inject():
-    st.markdown(f"<style>{BASE_CSS}{CARDS_CSS}</style>", unsafe_allow_html=True)
+    st.markdown(f"<style>{_FONTS_CSS}\n{BASE_CSS}\n{CARDS_CSS}</style>", unsafe_allow_html=True)
