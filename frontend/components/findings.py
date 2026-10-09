@@ -1,7 +1,7 @@
 """findings.py — Audit findings: severity & rule filters, Viva defense expander."""
 import streamlit as st
 from config import GLOBAL_FILE, SEVERITIES, SEVERITY_TONE
-from components.primitives import esc, pill, sev_pill
+from components.primitives import esc, sev_pill
 
 PAGE = 8
 SEV_FILTERS = ("All", "Critical", "Warning", "Info")

@@ -1,6 +1,6 @@
 """about_codecompass.py — System architecture & interactive CRS calculator."""
 import streamlit as st
-from config import APP_NAME, CRS_BANDS, RULES, SEVERITY_WEIGHT, STACK, TAGLINE
+from config import APP_NAME, RULES, SEVERITY_WEIGHT, STACK, TAGLINE
 from components.primitives import esc, footer, pill, sev_pill
 
 

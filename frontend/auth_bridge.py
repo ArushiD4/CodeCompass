@@ -25,7 +25,6 @@ except Exception as exc:  # missing file, bad path or a config error at import t
 FUNCTION_NAMES = {
     "sign_in": ("login_with_third_party",),
     "sign_up": ("signup_with_third_party",),
-    "reset":   ("reset_password_with_third_party",),
 }
 
 
@@ -76,8 +75,3 @@ def sign_in(email, password):
 
 def sign_up(email, password):
     return _finish(_call("sign_up", email, password), email)
-
-
-def reset_password(email):
-    result = _call("reset", email)
-    return bool(result.get("success")), result.get("error") or ""

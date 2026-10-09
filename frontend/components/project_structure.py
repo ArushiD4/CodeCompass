@@ -1,5 +1,5 @@
 """project_structure.py — Project structure tab built from fetched audit & graph data."""
-from collections import Counter, defaultdict
+from collections import Counter
 import streamlit as st
 from components import graph_data
 from components.primitives import esc, pill

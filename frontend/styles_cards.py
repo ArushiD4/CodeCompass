@@ -2,9 +2,6 @@
 
 CARDS_CSS = """
 /* Top bar */
-.cc-brand{display:flex;align-items:center;gap:.65rem;font-weight:700;font-size:1.1rem;letter-spacing:-.02em;color:var(--ink)}
-.cc-logo{width:30px;height:30px;border-radius:9px;background:var(--brand-gradient);display:grid;place-items:center;box-shadow:0 0 16px rgba(0,245,160,.3)}
-.cc-logo::before{content:"";width:10px;height:18px;background:#07090E;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
 .cc-chips{display:flex;gap:.5rem;justify-content:flex-end;flex-wrap:wrap}
 .cc-pill{display:inline-flex;align-items:center;gap:.45rem;font-size:.78rem;font-weight:600;
   padding:.3rem .75rem;border-radius:999px;border:1px solid var(--tline,var(--line));
@@ -33,7 +30,6 @@ CARDS_CSS = """
 .cc-feat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(1.25rem,2vw,2rem);margin-top:2.5rem;width:100%}
 .cc-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:clamp(1.4rem,2.2vw,2rem);backdrop-filter:blur(16px);position:relative}
 .cc-card .cc-muted{max-width:65ch}
-.cc-bands{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
 
 /* Dashboard bento */
 .cc-bento{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:1rem;margin:1.25rem 0}
@@ -83,9 +79,6 @@ CARDS_CSS = """
   .cc-card,.cc-tile,.cc-find{transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
   .cc-card:hover,.cc-tile:hover{transform:translateY(-3px);border-color:var(--line-strong);box-shadow:0 8px 24px rgba(0,0,0,.35)}
   .cc-find:hover{transform:translateY(-3px);border-color:var(--tline);box-shadow:0 8px 28px rgba(0,0,0,.45),0 0 16px var(--tbg)}
-  .cc-more{display:inline-flex;align-items:center;gap:.3rem;color:var(--t);font-size:.82rem;font-weight:600;
-    transform:translateX(-6px);opacity:0;transition:transform .22s ease,opacity .22s ease}
-  .cc-find:hover .cc-more{transform:translateX(0);opacity:1}
   .cc-finds:has(.cc-find:hover) .cc-find:not(:hover){opacity:.55;transition:opacity .22s ease}
 }
 
