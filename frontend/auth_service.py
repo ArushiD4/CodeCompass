@@ -7,7 +7,7 @@ import streamlit as st
 try:
     FIREBASE_API_KEY = st.secrets.get("FIREBASE_API_KEY", "")
 except FileNotFoundError:
-    FIREBASE_API_KEY = ""
+    FIREBASE_API_KEY = "" # compass:ignore
 
 def login_with_third_party(email: str, password: str) -> dict:
     """
@@ -24,7 +24,7 @@ def login_with_third_party(email: str, password: str) -> dict:
         dict: A dictionary containing a boolean 'success' flag. On success, includes 
               'token' and 'user_id'. On failure, includes an 'error' string.
     """
-    if FIREBASE_API_KEY.startswith("AIzaSyB0DPf0g1uVRSqP9gJrg5G7yN-NF90suMs") or not FIREBASE_API_KEY:
+    if FIREBASE_API_KEY.startswith("placeholder") or not FIREBASE_API_KEY:
         # Temporary bypass for local testing: allow login if email and password are provided
         if email and password:
             return {"success": True, "token": "dummy-token-12345", "user_id": "dummy-user-id"}
@@ -63,7 +63,7 @@ def signup_with_third_party(email: str, password: str) -> dict:
         dict: A dictionary containing a boolean 'success' flag. On failure, includes 
               an 'error' string.
     """
-    if FIREBASE_API_KEY.startswith("AIzaSyB0DPf0g1uVRSqP9gJrg5G7yN-NF90suMs") or not FIREBASE_API_KEY:
+    if FIREBASE_API_KEY.startswith("placeholder") or not FIREBASE_API_KEY:
         # Temporary bypass for local testing: allow signup
         if email and password:
             return {"success": True}
@@ -99,7 +99,7 @@ def reset_password_with_third_party(email: str) -> dict:
         dict: A dictionary containing a boolean 'success' flag. On failure, includes 
               an 'error' string.
     """
-    if FIREBASE_API_KEY.startswith("AIzaSyB0DPf0g1uVRSqP9gJrg5G7yN-NF90suMs") or not FIREBASE_API_KEY:
+    if FIREBASE_API_KEY.startswith("placeholder") or not FIREBASE_API_KEY:
         # Temporary bypass for local testing: allow reset link send
         if email:
             return {"success": True}
