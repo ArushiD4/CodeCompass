@@ -1,5 +1,6 @@
 import ast
 import os
+from pathlib import Path
 from typing import Dict, List, Any
 
 # Fix 2: Pre-flight file size guard — mirrors the same constant in audit_engine.py.
@@ -138,8 +139,7 @@ def generate_codebase_graph(directory_path: str) -> Dict[str, Any]:
                 continue
 
             try:
-                with open(full_path, "r", encoding="utf-8") as f:
-                    code = f.read()
+                code = Path(full_path).read_text(encoding="utf-8")
 
                 tree = ast.parse(code, filename=rel_path)
                 visitor = CallGraphVisitor(rel_path)
