@@ -11,7 +11,7 @@ SAMPLE_PATH = os.path.dirname(os.path.abspath(__file__))
 OFFLINE_EMAIL = "developer@offline"
 OFFLINE_TOKEN = "offline-token"
 
-AREAS = ("Audit", "Playbook", "About CodeCompass", "Roadmap", "Fix and rescan")
+AREAS = ("Audit", "About CodeCompass", "Roadmap", "Fix and rescan")
 SECTIONS = ("Findings", "Call graph", "Project structure")
 
 # CRS health bands, ARCHITECTURE.md section 8.3: (minimum score, label, tone, guidance)

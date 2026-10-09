@@ -2,8 +2,7 @@
 import streamlit as st
 from config import AREAS, SECTIONS
 from components import (about_codecompass, findings, fix_rescan, graph_view,
-                        hero, navbar, playbook, project_structure, roadmap,
-                        scan_form)
+                        hero, navbar, project_structure, roadmap, scan_form)
 
 EMPTY = ('<div class="cc-card" style="margin-top:1rem"><p class="cc-h2">No audit yet</p>'
          '<p class="cc-muted">Enter a project name and directory above, then run the audit. '
@@ -38,8 +37,6 @@ def render():
 
     if area == "Audit":
         _render_audit_area()
-    elif area == "Playbook":
-        playbook.render()
     elif area == "About CodeCompass":
         about_codecompass.render()
     elif area == "Roadmap":
