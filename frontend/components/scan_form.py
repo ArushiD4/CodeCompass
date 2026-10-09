@@ -110,7 +110,9 @@ def render():
                         if expected_name and p.get("project_name") != expected_name:
                             st.warning("The project name differs from the label. The database may have been reset.")
                         state.clear_results()
-                        ss.update(report_data=data, last_audit_data={**p, "project_id": p["id"], "issues": data["issues"]})
+                        ss.update(report_data=data,
+                                  last_audit_data={**p, "project_id": p["id"], "issues": data["issues"]},
+                                  last_audit_path=p.get("directory_path", ""))
                         st.rerun()
 
     if ss.pop("autorun", False) or run:
