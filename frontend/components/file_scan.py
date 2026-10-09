@@ -1,6 +1,7 @@
 """file_scan.py — Safe directory walking, size limits, and facts compilation."""
 import os
 from pathlib import Path
+import streamlit as st
 from components.file_facts import extract_facts
 
 EXCLUDE_DIRS = {
@@ -41,12 +42,19 @@ def scan_project(root: str) -> dict:
 
     project_modules = {Path(rel).stem for rel, _ in py_rel_paths}
     results = {}
+    skipped_paths = []
 
-    for rel, full in py_rel_paths:
+    for rel, _ in py_rel_paths:
         try:
-            if os.path.getsize(full) > MAX_FILE_SIZE:
+            safe_path = safe_join(str(root_path), rel)
+        except ValueError:
+            skipped_paths.append(rel)
+            continue
+
+        try:
+            if os.path.getsize(safe_path) > MAX_FILE_SIZE:
                 continue
-            source = Path(full).read_text(encoding="utf-8", errors="replace")
+            source = Path(safe_path).read_text(encoding="utf-8", errors="replace")
             facts = extract_facts(source, rel, project_modules)
             results[rel] = facts
         except Exception as exc:
@@ -56,4 +64,8 @@ def scan_project(root: str) -> dict:
                 "parse_error": str(exc)
             }
 
+    if skipped_paths:
+        st.warning(f"Skipped {len(skipped_paths)} file(s) that escaped root or could not be safely resolved.")
+
     return results
+
