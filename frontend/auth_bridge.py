@@ -71,6 +71,8 @@ def sign_up(email, password):
 
 @entrypoint()
 def reset_password(email):
+    if st.session_state.get("offline_mode"):
+        return False, "Not available in offline mode"
     if auth_service is None:
         return False, f"auth_service could not be imported: {_IMPORT_ERROR}"
     try:

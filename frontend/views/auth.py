@@ -40,6 +40,33 @@ def _form(name, button, action):
         st.error(message)
 
 
+def _forgot_password_view():
+    st.html(f'<p class="cc-h2" style="font-size:1.2rem;margin-bottom:.4rem">Reset password</p>'
+            f'<p class="cc-muted" style="margin-bottom:1rem">Enter your email to receive a password reset link.</p>')
+    if st.session_state.get("offline_mode"):
+        st.info("Not available in offline mode")
+    else:
+        with st.form("forgot_pw", border=False):
+            email = st.text_input("Email", key="forgot_email", placeholder="you@college.edu")
+            submitted = st.form_submit_button("Send reset link", type="primary", width="stretch")
+        if submitted:
+            if not email:
+                st.warning("Enter your email address.")
+            else:
+                try:
+                    ok, err = auth_bridge.reset_password(email)
+                except (OSError, ValueError) as exc:
+                    st.error(esc(f"Network error: {exc}"))
+                    ok, err = False, ""
+                if ok or (err and "EMAIL_NOT_FOUND" in err.upper()):
+                    st.success("If an account exists for this email, a reset link has been sent.")
+                elif err:
+                    st.error(esc(f"Reset failed: {err}"))
+    if st.button("← Back to sign in", key="btn_back_signin"):
+        st.session_state["_auth_subview"] = "signin"
+        st.rerun()
+
+
 def _offline_section():
     st.toggle("Developer offline mode", value=st.session_state.get("offline_mode", False),
               key="_offline_widget", on_change=_sync_offline,
@@ -66,10 +93,16 @@ def render():
             notice = st.session_state.get("auth_notice")
             if notice:
                 st.info(notice)
-            if not _offline_section():
+            if st.session_state.get("_auth_subview") == "forgot":
+                _forgot_password_view()
+            elif not _offline_section():
                 t_in, t_up = st.tabs(["Sign in", "Sign up"])
                 with t_in:
                     _form("signin", "Sign in", auth_bridge.sign_in)
+                    if st.button("Forgot password?", key="btn_forgot_pw"):
+                        st.session_state["_auth_subview"] = "forgot"
+                        st.rerun()
                 with t_up:
                     _form("signup", "Create account", auth_bridge.sign_up)
     st.html(footer())
+
