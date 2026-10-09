@@ -18,7 +18,7 @@ def _action(col, page):
 def render(page):
     ss = st.session_state
     brand, links, chips, action = st.columns([3, 4.5, 2.5, 2], vertical_alignment="center")
-    brand.button(f"🧭 {APP_NAME}", key=f"nav_brand_{page}", on_click=state.go, args=("landing",),
+    brand.button(f"{APP_NAME}", key=f"nav_brand_{page}", on_click=state.go, args=("landing",),
                  help="Go to CodeCompass Home")
 
     has_dash = state.is_allowed() and page != "dashboard"

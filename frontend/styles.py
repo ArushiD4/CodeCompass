@@ -62,6 +62,7 @@ header[data-testid="stHeader"]{background:transparent!important;height:0}
 .st-key-intro [data-testid="stCustomComponentV1"],
 .st-key-intro iframe{
   width:100vw!important;height:calc(100vh - 76px)!important;
+  height:calc(100dvh - 76px)!important;
   min-height:560px!important;border:0!important;display:block!important;
   margin:0!important;padding:0!important;
 }

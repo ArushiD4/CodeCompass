@@ -4,20 +4,18 @@ from config import APP_NAME
 from components.primitives import esc, footer, pill
 
 MILESTONES = (
-    ("Multi-Language AST via Tree-sitter", "Q1 Engine Expansion",
+    ("Multi-Language AST via Tree-sitter", "Engine Expansion",
      "Extend beyond Python to TypeScript, Go, and Java using Tree-sitter native bindings, enabling polyglot project auditing with unified grammar abstractions."),
-    ("Production PostgreSQL Migration", "Q2 Data Layer",
-     "Transition the SQLite metadata store to cloud-hosted PostgreSQL with asyncpg, supporting enterprise multi-tenancy and distributed horizontal workers."),
-    ("CI/CD Pipeline Integration", "Q2 DevSecOps",
-     "Release a GitHub Actions workflow and pre-commit hook that gates PR mergers on minimum Code Readiness Score thresholds and fails on CRITICAL findings."),
-    ("Real-time IDE Language Server", "Q3 Developer Experience",
+    ("Production PostgreSQL Migration", "Data Layer",
+     "Transition the SQLite metadata store to PostgreSQL, supporting enterprise multi-tenancy and distributed horizontal workers."),
+    ("Real-time IDE Language Server", "Developer Experience",
      "Package the AST rule engine as a Language Server Protocol (LSP) daemon, displaying Viva Defense tips inline within VS Code and Cursor."),
 )
 
 
 def render():
     st.html(f'<p class="cc-h1" style="margin-top:1rem;font-size:2.2rem">{esc(APP_NAME)} Future Enhancements</p>'
-            f'<p class="cc-lede">Planned capabilities for {esc(APP_NAME)} directly from architecture specification 10.2.</p>')
+            f'<p class="cc-lede">Planned capabilities for {esc(APP_NAME)}</p>')
     cards = "".join(
         f'<div class="cc-card" style="margin-bottom:1rem">'
         f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">'

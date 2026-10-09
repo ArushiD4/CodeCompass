@@ -4,21 +4,39 @@
 <meta charset="UTF-8">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{
-  width:100%;height:100%;margin:0;padding:0;overflow:hidden;
-  background:#07090E;color:#FFFFFF;
-  font-family:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+html, body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #07090E;
+  color: #FFFFFF;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
-.hero-stage{
-  position:relative;width:100%;height:100%;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
+
+.hero-stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background:
-    radial-gradient(ellipse 90% 65% at 50% 35%, rgba(0, 245, 160, 0.14), transparent 70%),
-    radial-gradient(ellipse 70% 50% at 15% 20%, rgba(0, 216, 246, 0.10), transparent 60%),
-    radial-gradient(ellipse 70% 50% at 85% 80%, rgba(255, 56, 92, 0.06), transparent 60%),
+    radial-gradient(
+      ellipse 90% 65% at 50% 35%,
+      rgba(0,245,160,.14), transparent 70%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 15% 20%,
+      rgba(0,216,246,.10), transparent 60%
+    ),
     #07090E;
-  overflow:hidden;
+  overflow: hidden;
 }
+
 .hero-grid{
   position:absolute;inset:0;pointer-events:none;
   background-size:54px 54px;
@@ -27,6 +45,7 @@ html,body{
     linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
   mask-image:radial-gradient(ellipse 90% 85% at 50% 50%, black 40%, transparent 95%);
 }
+
 .hero-hud-top{
   position:absolute;top:16px;left:clamp(1.5rem, 4vw, 3rem);right:clamp(1.5rem, 4vw, 3rem);
   display:flex;justify-content:space-between;align-items:center;
@@ -38,10 +57,26 @@ html,body{
 .dot.live{background:#00F5A0;box-shadow:0 0 10px #00F5A0;animation:pulseDot 2s infinite}
 @keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.85);opacity:.5}}
 
-.hero-content-wrap{
-  position:relative;width:min(90vw, 1200px);height:min(76vh, 580px);
-  display:flex;align-items:center;justify-content:center;
-  z-index:2;
+.hero-content-wrap {
+  position: relative;
+  width: min(92%, 1400px);
+  height: min(78vh, 700px);
+  height: min(78dvh, 700px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.frame1, .frame2, .frame3 {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(12px, 3vw, 36px);
 }
 
 .laser{
@@ -49,22 +84,69 @@ html,body{
   background:linear-gradient(90deg, transparent, #00F5A0 20%, #00D8F6 80%, transparent);
   box-shadow:0 0 20px #00F5A0, 0 0 40px #00D8F6;
   top:0;opacity:0;z-index:5;pointer-events:none;
-  animation:laserSweep 10s ease-in-out infinite;
+  animation:laserSweep 12s ease-in-out infinite;
 }
 
-.frame1{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;
-  opacity:1;
-  animation:crossfadeF1 10s ease-in-out infinite;
+.frame1 {
+  opacity: 1;
+  animation: crossfadeF1 12s ease-in-out infinite;
 }
-.frame2{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;
-  opacity:0;
-  animation:crossfadeF2 10s ease-in-out infinite;
+
+.frame2 {
+  opacity: 0;
+  animation: crossfadeF2 12s ease-in-out infinite;
+}
+
+.frame3 {
+  opacity: 0;
+  animation: crossfadeF3 12s ease-in-out infinite;
+}
+
+.brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 22px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #00F5A0, #00D8F6);
+  color: #07090E;
+  font-size: 36px;
+  box-shadow: 0 0 36px rgba(0,245,160,.2);
+}
+
+.brand-title {
+  font-size: clamp(44px, 7vw, 88px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -.055em;
+  background: linear-gradient(180deg, #FFFFFF 35%, #AAB6C8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-tagline {
+  margin-top: 18px;
+  color: #00F5A0;
+  font-size: clamp(18px, 2.5vw, 30px);
+  font-weight: 700;
+  letter-spacing: -.025em;
+}
+
+.brand-divider {
+  width: 64px;
+  height: 3px;
+  margin-top: 28px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #00F5A0, #00D8F6);
+}
+
+.brand-description {
+  margin-top: 20px;
+  color: #8A94A6;
+  font-size: clamp(14px, 1.5vw, 18px);
 }
 
 .badge-red{
@@ -101,27 +183,47 @@ html,body{
   font-size:clamp(13px, 1.3vw, 16px);color:#8A94A6;margin-top:18px;
 }
 
-@keyframes crossfadeF1{
-  0%, 45% { opacity: 1; transform: scale(1); }
-  50%, 95% { opacity: 0; transform: scale(0.98); }
+@keyframes crossfadeF1 {
+  0%, 27% { opacity: 1; transform: scale(1); }
+  33%, 94% { opacity: 0; transform: scale(.98); }
   100% { opacity: 1; transform: scale(1); }
 }
-@keyframes crossfadeF2{
-  0%, 45% { opacity: 0; transform: scale(0.98); }
-  50%, 95% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0.98); }
-}
-@keyframes laserSweep{
-  0%, 42% { top: 0; opacity: 0; }
-  45% { top: 10%; opacity: 1; }
-  49% { top: 90%; opacity: 1; }
-  52%, 100% { top: 100%; opacity: 0; }
+
+@keyframes crossfadeF2 {
+  0%, 32% { opacity: 0; transform: scale(.98); }
+  38%, 60% { opacity: 1; transform: scale(1); }
+  66%, 100% { opacity: 0; transform: scale(.98); }
 }
 
-@media (prefers-reduced-motion:reduce){
-  .frame1{display:none!important}
-  .frame2{opacity:1!important;animation:none!important}
-  .laser{display:none!important}
+@keyframes crossfadeF3 {
+  0%, 65% { opacity: 0; transform: scale(.98); }
+  72%, 94% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(.98); }
+}
+
+@keyframes laserSweep {
+  0%, 30% { top: 0; opacity: 0; }
+  35% { top: 10%; opacity: 1; }
+  45% { top: 90%; opacity: 1; }
+  50%, 100% { top: 100%; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame1, .frame2, .laser {
+    display: none !important;
+    animation: none !important;
+  }
+
+  .frame3 {
+    opacity: 1 !important;
+    display: flex !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .dot.live, .squiggle {
+    animation: none !important;
+  }
 }
 </style>
 </head>
@@ -140,7 +242,7 @@ html,body{
     <div class="frame1">
       <div class="badge-red"><span>●</span> CRS 38 / 100 · Critical Vulnerabilities Detected</div>
       <div class="code-terminal">
-        <div class="code-line"><span class="squiggle">API_SECRET = "sk-live-938210482901"</span></div>
+        <div class="code-line"><span class="squiggle">API_SECRET = "sk-test-FAKE123456789"</span></div>
         <div class="code-line"><span class="squiggle">f = open("eval_records.csv")</span></div>
         <div class="code-line"><span class="squiggle">try: eval(user_input)</span></div>
         <div class="code-line"><span class="squiggle">except: pass</span></div>
@@ -167,8 +269,19 @@ html,body{
         <circle cx="120" cy="97" r="5" fill="#00F5A0"/>
         <circle cx="220" cy="97" r="5" fill="#00F5A0"/>
       </svg>
-      <p style="font-size:clamp(20px, 2.2vw, 26px);font-weight:800;color:#FFFFFF;letter-spacing:-0.02em">Syntax Tree Resolved · 100% AST Coverage</p>
+      <p style="font-size:clamp(20px, 2.2vw, 26px);font-weight:800;color:#FFFFFF;letter-spacing:-0.02em">AST-Based Static Analysis Complete</p>
       <p class="caption">Deterministic static rule traversal across codebase.</p>
+    </div>
+    <div class="frame3">
+      <div class="brand-mark">◆</div>
+      <h1 class="brand-title">CodeCompass</h1>
+      <p class="brand-tagline">
+        Navigate your code. Defend your logic.
+      </p>
+      <div class="brand-divider"></div>
+      <p class="brand-description">
+        Static analysis. Clear findings. Code you can explain.
+      </p>
     </div>
   </div>
 </div>
