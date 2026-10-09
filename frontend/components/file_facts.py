@@ -14,7 +14,7 @@ def extract_facts(source: str, rel_path: str = "", project_modules: set | None =
     except SyntaxError as exc:
         empty["parse_error"] = f"Syntax error at line {exc.lineno}: {exc.msg}"
         return empty
-    except Exception as exc:
+    except (ValueError, RecursionError) as exc:
         empty["parse_error"] = str(exc)
         return empty
 

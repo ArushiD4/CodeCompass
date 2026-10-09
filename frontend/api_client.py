@@ -1,8 +1,10 @@
-"""api_client.py — REST API Client layer."""
+import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
 import requests
 import streamlit as st
+
+_logger = logging.getLogger(__name__)
 
 FAST, SCAN = 5, 180
 
@@ -20,8 +22,8 @@ def _api_key() -> str:
         secret_key = st.secrets.get("CODECOMPASS_API_KEY", "")
         if secret_key:
             return secret_key
-    except Exception:
-        pass
+    except (KeyError, FileNotFoundError, AttributeError) as exc:
+        _logger.debug("CODECOMPASS_API_KEY absent from st.secrets: %s", exc)
     return "pink-clounding"
 
 

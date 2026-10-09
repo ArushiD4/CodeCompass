@@ -1,9 +1,12 @@
 """local_store.py — SQLite persistence for viva defense rehearsal notes."""
 import contextlib
+import logging
 import os
 from pathlib import Path
 import sqlite3
 import time
+
+_logger = logging.getLogger(__name__)
 
 
 def _db_path():
@@ -28,7 +31,8 @@ def init_ok() -> bool:
                     "PRIMARY KEY(project_path, rel_file, prompt_idx))"
                 )
         return True
-    except Exception:
+    except (sqlite3.Error, OSError) as exc:
+        _logger.warning("local_store init failed: %s", exc)
         return False
 
 
@@ -43,7 +47,8 @@ def save_note(project_path: str, rel_file: str, prompt_idx: int, text: str) -> b
                     (str(project_path), str(rel_file), int(prompt_idx), str(text), time.time())
                 )
         return True
-    except Exception:
+    except (sqlite3.Error, OSError) as exc:
+        _logger.warning("local_store save_note failed: %s", exc)
         return False
 
 
@@ -57,5 +62,7 @@ def load_notes(project_path: str) -> dict:
                 (str(project_path),)
             )
             return {(row[0], row[1]): row[2] for row in cur.fetchall()}
-    except Exception:
+    except (sqlite3.Error, OSError) as exc:
+        _logger.warning("local_store load_notes failed: %s", exc)
         return {}
+

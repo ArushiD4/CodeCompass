@@ -1,16 +1,18 @@
 """Design system, part 1: tokens, global dark theme, and Streamlit overrides."""
+import logging
 import os
 import streamlit as st
 from styles_cards import CARDS_CSS
 
+_logger = logging.getLogger(__name__)
 _FONTS_FILE = os.path.join(os.path.dirname(__file__), "assets", "fonts.css")
 _FONTS_CSS = ""
 if os.path.exists(_FONTS_FILE):
     try:
         with open(_FONTS_FILE, "r", encoding="utf-8") as f:
             _FONTS_CSS = f.read()
-    except Exception:
-        pass
+    except OSError as exc:
+        _logger.warning("Failed to load fonts.css: %s", exc)
 
 BASE_CSS = """
 :root{

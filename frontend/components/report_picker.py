@@ -12,7 +12,7 @@ def fmt_time(created_at) -> str:
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
         return dt.astimezone().strftime("%d %b %Y, %I:%M %p")
-    except Exception:
+    except (ValueError, TypeError):
         return str(created_at)
 
 
