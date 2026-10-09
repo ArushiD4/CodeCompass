@@ -4,8 +4,10 @@ import auth_bridge
 from config import APP_NAME, TAGLINE
 from components import navbar
 from components.primitives import esc, footer
+from entrypoints import entrypoint
 
 
+@entrypoint()
 def _sync_offline():
     st.session_state["offline_mode"] = st.session_state["_offline_widget"]
 

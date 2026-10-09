@@ -10,6 +10,7 @@ Expected return shape (ARCHITECTURE.md 5.2): {"success": bool, "token": str, "us
 """
 import streamlit as st
 from config import OFFLINE_EMAIL, OFFLINE_TOKEN
+from entrypoints import entrypoint
 
 try:
     import auth_service
@@ -43,6 +44,7 @@ def enter_offline():
     _start_session(OFFLINE_EMAIL, OFFLINE_TOKEN)
 
 
+@entrypoint()
 def sign_in(email, password):
     if st.session_state.get("offline_mode"):
         enter_offline()
@@ -56,6 +58,7 @@ def sign_in(email, password):
     return _finish(result, email)
 
 
+@entrypoint()
 def sign_up(email, password):
     if auth_service is None:
         return False, f"auth_service could not be imported: {_IMPORT_ERROR}"
@@ -66,6 +69,7 @@ def sign_up(email, password):
     return _finish(result, email)
 
 
+@entrypoint()
 def reset_password(email):
     if auth_service is None:
         return False, f"auth_service could not be imported: {_IMPORT_ERROR}"

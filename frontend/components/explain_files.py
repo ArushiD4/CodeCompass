@@ -3,6 +3,7 @@ import os
 import streamlit as st
 from components import explain_facts_card, file_links, file_scan, local_store
 from components.primitives import esc, pill
+from entrypoints import entrypoint
 
 PROMPTS = (
     "In one sentence, what is this file's job?",
@@ -58,6 +59,7 @@ def render():
     issues = audit.get("issues", [])
 
     # Priority calculation
+    @entrypoint()
     def _prio(f):
         norm_f = f.replace("\\", "/")
         c = sum(1 for i in issues if i.get("file_path", "").replace("\\", "/") == norm_f and i.get("severity") == "CRITICAL")
@@ -102,6 +104,7 @@ def render():
         if key not in ss:
             ss[key] = saved_notes.get((selected, idx), "")
 
+        @entrypoint()
         def _on_change(i=idx, k=key):
             val = ss.get(k, "")
             saved_notes[(selected, i)] = val

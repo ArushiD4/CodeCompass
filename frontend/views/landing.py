@@ -4,6 +4,7 @@ import state
 from config import APP_NAME, RULES, SEVERITY_WEIGHT, TAGLINE
 from components import intro, navbar
 from components.primitives import esc, footer, pill, sev_pill
+from entrypoints import entrypoint
 
 
 def _headline():
@@ -66,6 +67,7 @@ def _rules_accordion():
             f'</p>{"".join(items)}</div>')
 
 
+@entrypoint()
 def _enter_path():
     if state.is_allowed():
         state.go("dashboard")

@@ -2,6 +2,7 @@
 import streamlit as st
 from config import GLOBAL_FILE, SEVERITIES, SEVERITY_TONE
 from components.primitives import esc, sev_pill
+from entrypoints import entrypoint
 
 PAGE = 8
 SEV_FILTERS = ("All", "Critical", "Warning", "Info")
@@ -47,6 +48,7 @@ def _card(issue):
     )
 
 
+@entrypoint()
 def _more():
     st.session_state["findings_limit"] += PAGE
 

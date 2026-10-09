@@ -3,6 +3,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 import requests
 import streamlit as st
+from entrypoints import entrypoint
 
 _logger = logging.getLogger(__name__)
 
@@ -108,6 +109,7 @@ def list_projects(base_url):
     session.mount("http://", adapter)
     session.mount("https://", adapter)
 
+    @entrypoint()
     def fetch(pid):
         try:
             r = session.get(f"{base_url.rstrip('/')}/api/projects/{pid}", headers=headers, timeout=8)

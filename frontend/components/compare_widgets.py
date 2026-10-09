@@ -1,6 +1,7 @@
 """compare_widgets.py — Reusable rendering tiles and cards for audit comparisons."""
 import streamlit as st
 from components.primitives import esc, pill, sev_pill
+from entrypoints import entrypoint
 
 
 def render_headline_strip(diff: dict):
@@ -84,6 +85,7 @@ def _render_group(title: str, issues: list, group_key: str):
         f'<ul style="list-style:none;padding:0;margin:0">{ "".join(items_html) }</ul></div>'
     )
     if len(issues) > 5 and limit < len(issues):
+        @entrypoint()
         def _expand():
             st.session_state[limit_key] = len(issues)
         st.button(f"Show all {len(issues)}", key=f"btn_all_{group_key}", on_click=_expand)

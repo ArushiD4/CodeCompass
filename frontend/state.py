@@ -53,6 +53,10 @@ def clear_results():
     st.session_state["findings_limit"] = DEFAULTS["findings_limit"]
 
 
+from entrypoints import entrypoint
+
+
+@entrypoint()
 def open_sample():
     """Guest entry callback for 'Run sample audit'."""
     ss = st.session_state
@@ -74,8 +78,10 @@ def open_sample():
               scan_path=SAMPLE_PATH, autorun=True, _page="dashboard", area="Audit")
 
 
+@entrypoint()
 def sign_out():
     """Terminates active session."""
     clear_results()
     st.session_state.update(authenticated=False, guest_mode=False, user_token=None,
                             user_email=None, offline_mode=False, _page="landing", area="Audit")
+

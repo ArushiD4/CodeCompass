@@ -3,6 +3,7 @@ import api_client
 from config import AREAS, SECTIONS
 from components import (compare_audits, explain_files, findings,
                         graph_view, hero, navbar, project_structure, scan_form)
+from entrypoints import entrypoint
 
 EMPTY = ('<div class="cc-card" style="margin-top:1rem"><p class="cc-h2">No audit yet</p>'
          '<p class="cc-muted">Enter a project name and directory above, then run the audit. '
@@ -26,6 +27,7 @@ def _render_audit_area():
         older = [p["id"] for p in projects if p.get("project_name") == pname and p.get("id") < curr_pid]
         if older:
             older_id = max(older)
+            @entrypoint()
             def _go_compare():
                 st.session_state["compare_ids"] = (older_id, curr_pid)
                 st.session_state["area"] = "Compare audits"

@@ -9,16 +9,20 @@ import state  # noqa: E402  (must come after set_page_config)
 import styles  # noqa: E402
 from components import about_codecompass, navbar, roadmap  # noqa: E402
 from views import auth, dashboard, landing  # noqa: E402
+from entrypoints import entrypoint  # noqa: E402
 
 
+@entrypoint()
 def _about():
     navbar.render("about")
     about_codecompass.render()
 
 
+@entrypoint()
 def _future_enhancements():
     navbar.render("future_enhancements")
     roadmap.render()
+
 
 
 ROUTES = {
