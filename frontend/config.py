@@ -15,7 +15,7 @@ SAMPLE_PATH = str((FIXTURES_DIR / "sample_moderate").resolve())
 OFFLINE_EMAIL = "developer@offline"
 OFFLINE_TOKEN = "offline-token"
 
-AREAS = ("Audit", "About CodeCompass", "Roadmap", "Compare audits")
+AREAS = ("Audit", "Compare audits")
 SECTIONS = ("Findings", "Call graph", "Project structure", "Explain files")
 
 # CRS health bands, ARCHITECTURE.md section 8.3: (minimum score, label, tone, guidance)

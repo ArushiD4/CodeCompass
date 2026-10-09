@@ -19,14 +19,13 @@ def render():
     if err:
         st.error(err)
         return
-    if not projects:
-        st.info("No previous audits found. Run an audit first.")
+    if len(projects) < 2:
+        st.info("At least two saved audits are required to compare differences. Run an audit first.")
         return
 
     options = [p["id"] for p in projects]
 
     # Pre-selection handling
-    def_a, def_b = None, None
     if "compare_ids" in ss:
         def_a, def_b = ss.pop("compare_ids")
         if def_a in options:
@@ -34,13 +33,14 @@ def render():
         if def_b in options:
             ss["cmp_b"] = def_b
     elif "cmp_a" not in ss and "cmp_b" not in ss:
-        # Default: newest report as Later, newest older report with same name as Earlier
-        if options:
-            newest_p = projects[0]
-            older = [p["id"] for p in projects[1:] if p.get("project_name") == newest_p.get("project_name")]
-            if older:
-                ss["cmp_a"] = older[0]
-                ss["cmp_b"] = newest_p["id"]
+        newest_p = projects[0]
+        older = [p["id"] for p in projects[1:] if p.get("project_name") == newest_p.get("project_name")]
+        if older:
+            ss["cmp_a"] = older[0]
+            ss["cmp_b"] = newest_p["id"]
+        elif len(projects) >= 2:
+            ss["cmp_a"] = projects[1]["id"]
+            ss["cmp_b"] = projects[0]["id"]
 
     c1, c2 = st.columns(2)
     idx_a = options.index(ss["cmp_a"]) if ss.get("cmp_a") in options else None
@@ -54,15 +54,17 @@ def render():
                         placeholder="Select later audit", key="cmp_b")
 
     if not id_a or not id_b:
+        st.info("Select two audits to see the comparison.")
         return
     if id_a == id_b:
-        st.info("Pick two different audits.")
+        st.warning("Please select two distinct audit records to compare.")
         return
 
     rep_a, err_a = api_client.get_project(id_a)
     rep_b, err_b = api_client.get_project(id_b)
     if err_a or err_b or not rep_a or not rep_b:
-        st.error("That audit no longer exists. The backend database may have been reset.")
+        msg = err_a or err_b or "Selected audit record was not found."
+        st.error(f"Failed to load audit records: {msg}")
         return
 
     earlier, later, swapped = audit_diff.order_reports(rep_a, rep_b)

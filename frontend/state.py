@@ -10,6 +10,7 @@ DEFAULTS = {
     "backend_url": os.environ.get("CODECOMPASS_BACKEND_URL", BACKEND_URL),
     "scan_name": "", "scan_path": "",
     "findings_limit": 8, "section": "Findings",
+    "sample_audit_used": False, "auth_notice": "",
 }
 RESULT_KEYS = ("last_audit_data", "last_audit_path", "report_data",
                "graph_data", "graph_error", "file_facts")
@@ -25,6 +26,22 @@ def is_allowed():
     return st.session_state.get("authenticated") or st.session_state.get("guest_mode")
 
 
+def is_authenticated() -> bool:
+    """True only if the user has an active authenticated account session."""
+    ss = st.session_state
+    return bool(ss.get("authenticated") and not ss.get("offline_mode") and not ss.get("guest_mode"))
+
+
+def is_offline() -> bool:
+    """True if in Developer Offline Mode."""
+    return bool(st.session_state.get("offline_mode"))
+
+
+def is_guest() -> bool:
+    """True if in guest sample audit mode."""
+    return bool(st.session_state.get("guest_mode"))
+
+
 def go(page):
     st.session_state["_page"] = page
 
@@ -38,12 +55,21 @@ def clear_results():
 
 def open_sample():
     """Guest entry callback for 'Run sample audit'."""
+    ss = st.session_state
+    if not ss.get("authenticated") and ss.get("sample_audit_used"):
+        ss["auth_notice"] = (
+            "You have already used your 1 free sample audit for this session. "
+            "Please sign in or create an account to audit additional projects."
+        )
+        ss["_page"] = "auth"
+        return
+
     if not os.path.exists(SAMPLE_PATH):
         st.error(f"Sample directory not found. Check SAMPLE_PATH in config.py ({SAMPLE_PATH})")
         return
     clear_results()
     folder_name = os.path.basename(SAMPLE_PATH)
-    ss = st.session_state
+    ss["_sample_in_flight"] = True
     ss.update(guest_mode=True, scan_name=f"Sample: {folder_name}",
               scan_path=SAMPLE_PATH, autorun=True, _page="dashboard", area="Audit")
 

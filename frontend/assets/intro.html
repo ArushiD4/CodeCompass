@@ -4,33 +4,75 @@
 <meta charset="UTF-8">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{margin:0;height:100%;overflow:hidden;background:#07090E;color:#FFFFFF;font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;display:grid;place-items:center}
-.stage{position:relative;width:min(92vw,740px);height:min(60vh,440px);perspective:1100px;display:grid;place-items:center}
-.laptop{width:min(88vw,640px);height:min(52vh,370px);background:#121622;border:2px solid rgba(255,255,255,.12);border-radius:18px;padding:14px;box-shadow:0 0 70px rgba(0,245,160,.14);transform-style:preserve-3d;animation:laptopZoom 11s cubic-bezier(.4,0,.2,1) infinite}
-.screen{width:100%;height:100%;background:#090C14;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:22px;position:relative;overflow:hidden}
-.frame1{position:absolute;inset:22px;animation:fadeF1 11s infinite}
-.frame2{position:absolute;inset:22px;opacity:0;animation:fadeF2 11s infinite}
+html,body{
+  width:100vw;height:100%;margin:0;padding:0;overflow:hidden;
+  background:#07090E;color:#FFFFFF;
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+}
+.hero-stage{
+  position:relative;width:100vw;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(ellipse 90% 65% at 50% 45%, rgba(0, 245, 160, 0.12), transparent 70%),
+    radial-gradient(ellipse 70% 50% at 15% 15%, rgba(0, 216, 246, 0.08), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 85%, rgba(255, 56, 92, 0.05), transparent 60%),
+    #07090E;
+  overflow:hidden;
+}
+.hero-grid{
+  position:absolute;inset:0;pointer-events:none;
+  background-size:48px 48px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  mask-image:radial-gradient(ellipse 85% 85% at 50% 50%, black 35%, transparent 85%);
+}
+.hero-canvas{
+  position:relative;width:min(94vw, 1500px);height:min(80vh, 640px);
+  background:rgba(14, 19, 29, 0.92);border:1px solid rgba(255, 255, 255, 0.14);
+  border-radius:20px;box-shadow:0 0 100px rgba(0, 245, 160, 0.16), 0 30px 80px rgba(0, 0, 0, 0.7);
+  backdrop-filter:blur(24px);overflow:hidden;
+  animation:canvasZoom 11s cubic-bezier(.4, 0, .2, 1) infinite;
+}
+.hero-topbar{
+  height:40px;background:rgba(10, 14, 22, 0.95);border-bottom:1px solid rgba(255, 255, 255, 0.08);
+  display:flex;align-items:center;padding:0 18px;gap:8px;
+}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dot.r{background:#FF385C}.dot.y{background:#FFB800}.dot.g{background:#00F5A0}
+.hero-status{
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:#8A94A6;margin-left:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.screen{width:100%;height:calc(100% - 40px);position:relative;overflow:hidden;padding:clamp(20px, 3vw, 40px)}
+.frame1{position:absolute;inset:clamp(20px, 3vw, 40px);animation:fadeF1 11s infinite}
+.frame2{position:absolute;inset:clamp(20px, 3vw, 40px);opacity:0;animation:fadeF2 11s infinite}
 .frame-hold{position:absolute;inset:0;display:grid;place-content:center;text-align:center;opacity:0;animation:fadeHold 11s infinite;pointer-events:none}
-.code-line{font-family:'JetBrains Mono',monospace;font-size:clamp(11px,1.6vmin,13px);line-height:1.9;color:#B6BFCC}
+.code-line{font-family:'JetBrains Mono',monospace;font-size:clamp(13px, 1.5vw, 17px);line-height:2.1;color:#B6BFCC}
 .squiggle{text-decoration:underline wavy #FF385C 2px;animation:pulseSquiggle 1.5s ease-in-out infinite}
 @keyframes pulseSquiggle{0%,100%{text-decoration-color:#FF385C}50%{text-decoration-color:#FF859B}}
-.badge-red{display:inline-block;padding:4px 10px;border-radius:99px;background:rgba(255,56,92,.18);border:1px solid rgba(255,56,92,.4);color:#FF385C;font-size:11px;font-weight:700;margin-bottom:12px}
-.badge-green{display:inline-block;padding:4px 10px;border-radius:99px;background:rgba(0,245,160,.18);border:1px solid rgba(0,245,160,.4);color:#00F5A0;font-size:11px;font-weight:700;margin-bottom:12px}
-.caption{font-size:clamp(12px,1.8vmin,14px);color:#8A94A6;margin-top:14px}
-.laser{position:absolute;left:0;right:0;height:3px;background:#00F5A0;box-shadow:0 0 18px #00F5A0;top:0;opacity:0;animation:sweep 11s infinite}
-.title-hold{font-size:clamp(26px,4.5vmin,36px);font-weight:800;letter-spacing:-.03em;color:#FFFFFF;text-shadow:0 0 30px rgba(0,245,160,.3)}
-.tagline-hold{font-size:clamp(13px,2vmin,15px);color:#00F5A0;margin-top:6px;font-weight:500}
+.badge-red{display:inline-block;padding:5px 14px;border-radius:99px;background:rgba(255,56,92,.18);border:1px solid rgba(255,56,92,.4);color:#FF385C;font-size:clamp(11px,1.1vw,13px);font-weight:700;margin-bottom:14px}
+.badge-green{display:inline-block;padding:5px 14px;border-radius:99px;background:rgba(0,245,160,.18);border:1px solid rgba(0,245,160,.4);color:#00F5A0;font-size:clamp(11px,1.1vw,13px);font-weight:700;margin-bottom:14px}
+.caption{font-size:clamp(13px,1.4vw,16px);color:#8A94A6;margin-top:16px}
+.laser{position:absolute;left:0;right:0;height:3px;background:#00F5A0;box-shadow:0 0 22px #00F5A0;top:0;opacity:0;animation:sweep 11s infinite}
+.title-hold{font-size:clamp(36px,5.5vw,60px);font-weight:800;letter-spacing:-.03em;color:#FFFFFF;text-shadow:0 0 40px rgba(0,245,160,.4)}
+.tagline-hold{font-size:clamp(15px,2.2vw,22px);color:#00F5A0;margin-top:10px;font-weight:600}
 @keyframes fadeF1{0%,26%{opacity:1}29%,93%{opacity:0}97%,100%{opacity:1}}
 @keyframes fadeF2{0%,27%{opacity:0}30%,51%{opacity:1}54%,100%{opacity:0}}
 @keyframes sweep{0%,27%{top:0;opacity:0}28%{top:0;opacity:1}48%{top:100%;opacity:1}50%,100%{opacity:0}}
-@keyframes laptopZoom{0%,51%{transform:rotateX(10deg) scale(1);opacity:1}74%{transform:rotateX(0deg) scale(3.8);opacity:0}75%,92%{transform:rotateX(10deg) scale(0.85);opacity:0}96%,100%{transform:rotateX(10deg) scale(1);opacity:1}}
-@keyframes fadeHold{0%,76%{opacity:0;transform:scale(.95)}78%,90%{opacity:1;transform:scale(1)}92%,100%{opacity:0;transform:scale(1.04)}}
-@media (prefers-reduced-motion:reduce){.laptop{animation:none!important;transform:none!important;opacity:1!important}.frame1{display:none!important}.frame2{opacity:1!important;animation:none!important}.laser,.frame-hold{display:none!important}}
+@keyframes canvasZoom{0%,51%{transform:rotateX(6deg) scale(1);opacity:1}72%{transform:rotateX(0deg) scale(2.8);opacity:0}73%,92%{transform:rotateX(6deg) scale(0.96);opacity:0}96%,100%{transform:rotateX(6deg) scale(1);opacity:1}}
+@keyframes fadeHold{0%,75%{opacity:0;transform:scale(.95)}78%,92%{opacity:1;transform:scale(1)}98%,100%{opacity:0;transform:scale(1.03)}}
+@media (prefers-reduced-motion:reduce){.hero-canvas{animation:none!important;transform:none!important;opacity:1!important}.frame1{display:none!important}.frame2{opacity:1!important;animation:none!important}.laser,.frame-hold{display:none!important}}
 </style>
 </head>
 <body>
-<div class="stage">
-  <div class="laptop">
+<div class="hero-stage">
+  <div class="hero-grid"></div>
+  <div class="hero-canvas">
+    <div class="hero-topbar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="hero-status"><code>codecompass-engine</code> · static AST audit</span>
+    </div>
     <div class="screen">
       <div class="laser"></div>
       <div class="frame1">
@@ -39,19 +81,19 @@ html,body{margin:0;height:100%;overflow:hidden;background:#07090E;color:#FFFFFF;
         <div class="code-line"><span class="squiggle">f = open("eval_records.csv")</span></div>
         <div class="code-line"><span class="squiggle">try: eval(user_input)</span></div>
         <div class="code-line"><span class="squiggle">except: pass</span></div>
-        <p class="caption">Your examiner will find the one line you forgot.</p>
+        <p class="caption">Zero-execution AST analysis catches defects before evaluation.</p>
       </div>
       <div class="frame2">
         <span class="badge-green">AST SCAN COMPLETE · ZERO RUNTIME EXECUTION</span>
-        <svg width="220" height="90" viewBox="0 0 220 90" style="margin:8px 0;display:block">
+        <svg width="260" height="100" viewBox="0 0 220 90" style="margin:10px 0;display:block">
           <circle cx="110" cy="18" r="10" fill="#00F5A0"/>
           <line x1="110" y1="28" x2="60" y2="60" stroke="#00F5A0" stroke-width="2"/>
           <line x1="110" y1="28" x2="160" y2="60" stroke="#00F5A0" stroke-width="2"/>
           <circle cx="60" cy="65" r="9" fill="#00D8F6"/>
           <circle cx="160" cy="65" r="9" fill="#00D8F6"/>
         </svg>
-        <p style="font-size:18px;font-weight:700;color:#FFFFFF">Syntax Tree Resolved</p>
-        <p class="caption" style="margin-top:6px">Deterministic static rule traversal.</p>
+        <p style="font-size:20px;font-weight:700;color:#FFFFFF">Syntax Tree Resolved</p>
+        <p class="caption" style="margin-top:6px">Deterministic static rule traversal across codebase.</p>
       </div>
     </div>
   </div>

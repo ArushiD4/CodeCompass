@@ -96,15 +96,19 @@ def discover_projects(fetch, batch=25, workers=8, limit=500):
     return projects, None
 
 
-@st.cache_data(ttl=15)
+@st.cache_data(ttl=30)
 def list_projects(base_url):
     base_url = (base_url or "").replace("localhost", "127.0.0.1")
     key = _api_key()
     headers = {"X-API-Key": key} if key else {}
+    session = requests.Session()
+    adapter = requests.adapters.HTTPAdapter(pool_connections=16, pool_maxsize=16)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
 
     def fetch(pid):
         try:
-            r = requests.get(f"{base_url.rstrip('/')}/api/projects/{pid}", headers=headers, timeout=FAST)
+            r = session.get(f"{base_url.rstrip('/')}/api/projects/{pid}", headers=headers, timeout=8)
             if r.status_code == 200:
                 data = r.json()
                 return data.get("project", data), None
@@ -122,4 +126,7 @@ def list_projects(base_url):
         except Exception as exc:
             return None, str(exc)
 
-    return discover_projects(fetch)
+    try:
+        return discover_projects(fetch)
+    finally:
+        session.close()

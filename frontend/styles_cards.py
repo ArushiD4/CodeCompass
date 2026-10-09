@@ -12,6 +12,20 @@ CARDS_CSS = """
 .cc-dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block;box-shadow:0 0 8px currentColor}
 
 /* Type */
+.cc-hero-lockup{margin:2rem 0 1.25rem}
+.cc-brand-title{
+  font-size:clamp(2.8rem,5.5vw,4.5rem);font-weight:800;letter-spacing:-.04em;line-height:1.05;
+  color:var(--ink);margin:0 0 .5rem;background:linear-gradient(180deg,#FFFFFF 40%,#B6BFCC 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.cc-hero-tagline{
+  font-size:clamp(1.2rem,2.2vw,1.75rem);font-weight:600;letter-spacing:-.02em;color:var(--brand);
+  margin:0 0 .75rem;line-height:1.3;
+}
+.cc-hero-support{
+  font-size:clamp(1rem,1.4vw,1.2rem);color:var(--ink-2);max-width:54ch;line-height:1.6;
+  margin:0 0 1.25rem;
+}
 .cc-h1{font-size:clamp(2.1rem,4.8vw,3.4rem);line-height:1.08;letter-spacing:-.035em;font-weight:700;
   color:var(--ink);max-width:18em;margin:2.5rem 0 .75rem}
 .cc-lede{font-size:1.15rem;line-height:1.6;color:var(--ink-2);max-width:56ch;margin:0 0 1.75rem}

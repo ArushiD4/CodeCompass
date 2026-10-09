@@ -46,17 +46,19 @@ header[data-testid="stHeader"]{background:transparent!important;height:0}
 [data-testid="stToolbar"],[data-testid="stDecoration"],footer,#MainMenu{display:none!important}
 
 [data-testid="stMainBlockContainer"],.block-container{
-  max-width:1160px;margin:0 auto;padding:1.25rem 1.5rem 4rem;position:relative;z-index:1;
-  overflow-x:hidden!important;
+  width:100%!important;max-width:1440px!important;margin:0 auto!important;
+  padding:0.75rem clamp(1rem,2.5vw,2.5rem) 4rem!important;position:relative;z-index:1;
+  box-sizing:border-box;
 }
 
-/* Full-bleed intro container */
+/* Hero intro container */
 .st-key-intro{
-  width:100vw!important;position:relative!important;left:50%!important;
-  margin-left:-50vw!important;margin-top:-1.25rem!important;
+  width:100%!important;margin:0 auto 1rem auto!important;
+  display:flex!important;justify-content:center!important;
 }
 .st-key-intro iframe{
-  width:100vw!important;height:calc(100vh - 96px)!important;border:0!important;display:block;
+  width:100%!important;height:calc(100vh - 120px)!important;
+  min-height:480px!important;max-height:720px!important;border:0!important;display:block;
 }
 
 /* Buttons */

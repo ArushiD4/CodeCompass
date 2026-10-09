@@ -16,8 +16,8 @@ MILESTONES = (
 
 
 def render():
-    st.html(f'<p class="cc-h1" style="margin-top:1rem;font-size:2.2rem">{esc(APP_NAME)} Engineering Roadmap</p>'
-            f'<p class="cc-lede">Planned capabilities directly from architecture specification 10.2.</p>')
+    st.html(f'<p class="cc-h1" style="margin-top:1rem;font-size:2.2rem">{esc(APP_NAME)} Future Enhancements</p>'
+            f'<p class="cc-lede">Planned capabilities for {esc(APP_NAME)} directly from architecture specification 10.2.</p>')
     cards = "".join(
         f'<div class="cc-card" style="margin-bottom:1rem">'
         f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">'

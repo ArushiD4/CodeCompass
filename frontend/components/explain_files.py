@@ -25,8 +25,19 @@ def render():
         st.info("Run an audit to explain your files.")
         return
 
-    st.caption("Facts are read from your code with Python's ast module. "
-               "'Called by' and 'Calls into' come from name matching, so entries marked ? are possible, not certain.")
+    with st.expander("ℹ️ How CodeCompass reads your code & connections (Plain English Guide)", expanded=False):
+        st.markdown(
+            "**How CodeCompass reads your code**\n\n"
+            "CodeCompass examines your Python code's structure to identify things like functions, classes, "
+            "imports, and function calls. It uses this information to build a map of how parts of your code connect.\n\n"
+            "**What do 'Calls into' and 'Called by' mean?**\n\n"
+            "- **Calls into:** Functions or methods that this function appears to call.\n"
+            "- **Called by:** Functions or methods that appear to call this function.\n"
+            "- **Possible connection (?):** CodeCompass found a potential match based on function names, but it cannot confirm that the connection is real.\n\n"
+            "**Important limitation:**\n\n"
+            "Python can resolve function calls dynamically, so matching names alone does not always prove which function "
+            "will execute. Treat connections marked '?' as possibilities, not confirmed relationships."
+        )
 
     db_ok = local_store.init_ok()
     if not db_ok:
@@ -99,11 +110,15 @@ def render():
 
         st.text_area(prompt, key=key, on_change=_on_change, height=80)
         if idx == 2:
-            with st.expander("Show files that depend on this one"):
-                st.caption("Answer first, then look")
+            rev_key = f"reveal_deps_{selected}"
+            if not ss.get(rev_key):
+                if st.button("Reveal answer", key=f"btn_rev_{selected}"):
+                    ss[rev_key] = True
+                    st.rerun()
+            else:
                 deps = file_links.dependents(selected, file_facts, graph)
-                if deps:
-                    for d in deps:
-                        st.markdown(f"- `{esc(d)}`")
-                else:
-                    st.caption("No other files depend on this file.")
+                dep_items = "".join(f"<li><code>{esc(d)}</code></li>" for d in deps) if deps else "<li><em>No other files depend on this file.</em></li>"
+                st.html(f'<div class="cc-tip" style="margin:.5rem 0"><b>Files that depend on this one:</b><ul style="margin:.25rem 0 0 1.2rem">{dep_items}</ul></div>')
+                if st.button("Hide answer", key=f"btn_hide_{selected}"):
+                    ss[rev_key] = False
+                    st.rerun()

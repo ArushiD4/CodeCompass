@@ -25,6 +25,17 @@ def _signal_lost_card():
 
 def _scan(name, path):
     ss = st.session_state
+    is_sample = ss.pop("_sample_in_flight", False)
+    if not ss.get("authenticated"):
+        if ss.get("sample_audit_used") and not is_sample:
+            ss["auth_notice"] = (
+                "You have already used your 1 free sample audit for this session. "
+                "Please sign in or create an account to audit additional projects."
+            )
+            ss["_page"] = "auth"
+            st.rerun()
+            return
+        ss["sample_audit_used"] = True
     path = os.path.expanduser(path)
     if not name or not path:
         st.warning("Enter a project name and a directory path first.")

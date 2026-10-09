@@ -61,6 +61,9 @@ def render():
         with st.container(key="card_auth"):
             st.html(f'<p class="cc-h2" style="font-size:1.4rem">Welcome to {esc(APP_NAME)}</p>'
                     f'<p class="cc-muted" style="margin-bottom:1rem">Sign in to save audits and open them later.</p>')
+            notice = st.session_state.get("auth_notice")
+            if notice:
+                st.info(notice)
             if not _offline_section():
                 t_in, t_up = st.tabs(["Sign in", "Sign up"])
                 with t_in:

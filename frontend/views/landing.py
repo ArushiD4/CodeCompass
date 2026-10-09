@@ -1,14 +1,19 @@
 """landing.py — Public Landing Page View."""
 import streamlit as st
 import state
-from config import RULES, SEVERITY_WEIGHT, TAGLINE
+from config import APP_NAME, RULES, SEVERITY_WEIGHT, TAGLINE
 from components import intro, navbar
 from components.primitives import esc, footer, pill, sev_pill
 
 
 def _headline():
-    return (f'<h1 class="cc-h1">Audit your code the way your examiner will read it.</h1>'
-            f'<p class="cc-lede">{esc(TAGLINE)}</p>')
+    return (
+        f'<div class="cc-hero-lockup">'
+        f'<h1 class="cc-brand-title">{esc(APP_NAME)}</h1>'
+        f'<p class="cc-hero-tagline">{esc(TAGLINE)}</p>'
+        f'<p class="cc-hero-support">Audit your code the way your examiner will read it.</p>'
+        f'</div>'
+    )
 
 
 def _scroll_cue():
