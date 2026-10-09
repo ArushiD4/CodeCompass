@@ -46,8 +46,7 @@ def scan_project(root: str) -> dict:
         try:
             if os.path.getsize(full) > MAX_FILE_SIZE:
                 continue
-            with open(full, "r", encoding="utf-8", errors="replace") as fp:
-                source = fp.read()
+            source = Path(full).read_text(encoding="utf-8", errors="replace")
             facts = extract_facts(source, rel, project_modules)
             results[rel] = facts
         except Exception as exc:
