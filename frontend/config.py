@@ -7,7 +7,11 @@ PROJECT_CREDIT = "Final Year Academic Evaluation"
 INTRO_ENABLED = True
 
 BACKEND_URL = "http://localhost:8000"
-SAMPLE_PATH = os.path.dirname(os.path.abspath(__file__))
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+FIXTURES_DIR = REPO_ROOT / "tests" / "fixtures"
+SAMPLE_PATH = str((FIXTURES_DIR / "sample_moderate").resolve())
 OFFLINE_EMAIL = "developer@offline"
 OFFLINE_TOKEN = "offline-token"
 

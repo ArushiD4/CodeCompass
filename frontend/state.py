@@ -38,9 +38,13 @@ def clear_results():
 
 def open_sample():
     """Guest entry callback for 'Run sample audit'."""
+    if not os.path.exists(SAMPLE_PATH):
+        st.error(f"Sample directory not found. Check SAMPLE_PATH in config.py ({SAMPLE_PATH})")
+        return
     clear_results()
+    folder_name = os.path.basename(SAMPLE_PATH)
     ss = st.session_state
-    ss.update(guest_mode=True, scan_name="CodeCompass sample",
+    ss.update(guest_mode=True, scan_name=f"Sample: {folder_name}",
               scan_path=SAMPLE_PATH, autorun=True, _page="dashboard", area="Audit")
 
 

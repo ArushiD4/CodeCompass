@@ -17,6 +17,8 @@ def _render_audit_area():
         st.html(EMPTY)
         return
     hero.render(audit, ss.get("report_data"))
+    if ss.get("section") not in SECTIONS:
+        ss["section"] = SECTIONS[0]
     sec = st.segmented_control("Project Section", SECTIONS,
                                default=ss.get("section", SECTIONS[0]),
                                key="section", label_visibility="collapsed") or SECTIONS[0]
@@ -31,6 +33,8 @@ def _render_audit_area():
 def render():
     ss = st.session_state
     navbar.render("dashboard")
+    if ss.get("area") not in AREAS:
+        ss["area"] = "Audit"
     area = st.segmented_control("Workspace Area", AREAS,
                                 default=ss.get("area", "Audit"),
                                 key="area", label_visibility="collapsed") or "Audit"
