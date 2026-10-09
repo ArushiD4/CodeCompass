@@ -11,6 +11,16 @@ MAX_FILE_SIZE = 1_000_000  # 1 MB
 MAX_FILES = 500
 
 
+def safe_join(root: str, rel: str) -> str:
+    root_path = Path(root).resolve()
+    target = (root_path / rel).resolve()
+    try:
+        target.relative_to(root_path)
+    except ValueError:
+        raise ValueError(f"Access denied: {rel} escapes root directory.")
+    return str(target)
+
+
 def scan_project(root: str) -> dict:
     root_path = Path(root).resolve()
     if not root_path.is_dir():
