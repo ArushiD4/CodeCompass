@@ -2,7 +2,7 @@
 import streamlit as st
 import api_client
 from components import audit_diff, compare_widgets, report_picker
-from components.primitives import esc, footer
+from components.primitives import footer
 
 
 def render():
