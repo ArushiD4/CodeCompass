@@ -16,7 +16,7 @@ OFFLINE_EMAIL = "developer@offline"
 OFFLINE_TOKEN = os.environ.get("CODECOMPASS_OFFLINE_TOKEN", "")
 
 AREAS = ("Audit", "Compare audits")
-SECTIONS = ("Findings", "Call graph", "Project structure", "Explain files")
+SECTIONS = ("Findings", "Call graph", "Project structure")
 
 # CRS health bands, ARCHITECTURE.md section 8.3: (minimum score, label, tone, guidance)
 CRS_BANDS = (

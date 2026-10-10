@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import streamlit as st
 from components.file_facts import extract_facts
+from entrypoints import entrypoint
 
 EXCLUDE_DIRS = {
     ".git", "__pycache__", "venv", ".venv", "ccenv", "env",
@@ -22,6 +23,7 @@ def safe_join(root: str, rel: str) -> str:
     return str(target)
 
 
+@entrypoint()
 def scan_project(root: str) -> dict:
     root_path = Path(root).resolve()
     if not root_path.is_dir():

@@ -48,17 +48,6 @@ def test_findings_answer_hidden_initially():
     assert len(res) == 4
 
 
-def test_explain_files_terminology_explanation():
-    """Verify plain English AST and call-graph explanations."""
-    with open(os.path.join(os.path.dirname(__file__), "..", "components", "explain_files.py"), "r", encoding="utf-8") as f:
-        content = f.read()
-
-    assert "How CodeCompass reads your code" in content
-    assert "What do 'Calls into' and 'Called by' mean?" in content
-    assert "Calls into:" in content
-    assert "Called by:" in content
-    assert "Possible connection (?):" in content
-    assert "Important limitation:" in content
 
 
 def test_sample_audit_single_use_restriction():

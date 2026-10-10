@@ -1,7 +1,7 @@
 import streamlit as st
 import api_client
 from config import AREAS, SECTIONS
-from components import (compare_audits, explain_files, findings,
+from components import (compare_audits, findings,
                         graph_view, hero, navbar, project_structure, scan_form)
 from entrypoints import entrypoint
 
@@ -44,8 +44,6 @@ def _render_audit_area():
         graph_view.render()
     elif sec == "Project structure":
         project_structure.render()
-    elif sec == "Explain files":
-        explain_files.render()
 
 
 def render():

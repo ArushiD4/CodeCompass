@@ -72,7 +72,7 @@ def test_all_workspace_areas_and_tabs():
 
     # Tabs inside Audit
     at.session_state["area"] = "Audit"
-    for sec in ("Findings", "Call graph", "Project structure", "Explain files"):
+    for sec in ("Findings", "Call graph", "Project structure"):
         at.session_state["section"] = sec
         at.run()
         _no_exception(at, f"Section tab: {sec}")
