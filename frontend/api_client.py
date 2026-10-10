@@ -25,7 +25,7 @@ def _api_key() -> str:
             return secret_key
     except (KeyError, FileNotFoundError, AttributeError) as exc:
         _logger.debug("CODECOMPASS_API_KEY absent from st.secrets: %s", exc)
-    return "pink-clounding"
+    return "patient-zero"
 
 
 def _explain(resp):

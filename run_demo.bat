@@ -38,8 +38,16 @@ if exist "%VENV_PYTHON%" (
 
 REM ── 2. Start the FastAPI backend in a new window ──────────────────────────
 REM Fix 1: Export the API key so the FastAPI verify_api_key dependency can read it.
-REM        The same value lives in frontend/.streamlit/secrets.toml for the Streamlit side.
-set "CODECOMPASS_API_KEY=pink-clounding"
+REM        Load from frontend/.streamlit/secrets.toml so backend and frontend keys stay in sync.
+set "CODECOMPASS_API_KEY=patient-zero"
+if exist "%SCRIPT_DIR%frontend\.streamlit\secrets.toml" (
+    for /f "tokens=2 delims==" %%A in ('findstr /R /C:"^[ ]*CODECOMPASS_API_KEY" "%SCRIPT_DIR%frontend\.streamlit\secrets.toml"') do (
+        set "TEMP_KEY=%%~A"
+        set "TEMP_KEY=!TEMP_KEY: =!"
+        set "TEMP_KEY=!TEMP_KEY:"=!"
+        if not "!TEMP_KEY!"=="" set "CODECOMPASS_API_KEY=!TEMP_KEY!"
+    )
+)
 echo  [1/3] Starting FastAPI backend on http://localhost:8000 ...
 start "CodeCompass Backend" cmd /k "cd /d %SCRIPT_DIR%backend && %RUN_UVICORN% app.main:app --reload --host 127.0.0.1 --port 8000"
 
