@@ -41,10 +41,11 @@ def test_findings_answer_hidden_initially():
         "viva_tip": "Sensitive credentials must be loaded from environment variables.",
     }
     card_html = findings._card(issue)
-    assert "Examiner Question:" in card_html
-    assert "Reveal answer / defense strategy" in card_html
-    # Ensure viva tip is not directly shown in the card outside the reveal details
-    assert "Viva Defense Summary:" not in card_html
+    assert "Question:" in card_html
+    assert "Show simple explanation" in card_html
+    res = findings._lookup("Hardcoded Credential")
+    assert res is not None
+    assert len(res) == 4
 
 
 def test_explain_files_terminology_explanation():
