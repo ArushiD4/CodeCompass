@@ -755,6 +755,11 @@ $$\text{Deductions} = 15 + 8 + 15 + 15 + 9 = 62$$
 $$\text{CRS} = \max(0, 100 - 62) = 38$$
 *(Validated by test suite assertion in `test_backend.py::test_crs_score_regression`)*
 
+> [!NOTE]
+> **Fixtures Note: Benchmark (`sample_bad.py`, 38) vs. Live Demo Sample (`sample_moderate`, 44)**
+> - **Canonical Benchmark (`sample_bad.py`) — CRS 38**: Single-file reference test fixture triggering all 5 rules (1 Hardcoded Credential [-15], 1 Unclosed Handle [-8], 1 Code Injection [-15], 1 Silent Exception [-15], and 3 Orphaned Functions [-9]; 7 issues total, deduction 62 $\to$ CRS 38).
+> - **Interactive Demo Fixture (`sample_moderate`) — CRS 44**: Multi-file codebase folder (`database.py`, `user_manager.py`) used by the Streamlit frontend's "Run sample audit" button. It exhibits 9 issues (1 Hardcoded Credential [-15], 1 Unclosed Handle [-8], 1 Silent Exception [-15], and 6 Orphaned Functions [-18]; deduction 56 $\to$ CRS 44).
+
 #### Proof 2: Clean Implementation Benchmark
 For a repository with 0 syntax errors, properly managed resources, environment-based credentials, and fully referenced functions:
 $$\text{Deductions} = 0$$
